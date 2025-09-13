@@ -204,7 +204,7 @@ const PropertyDetails = () => {
                             return (
                               <SwiperSlide>
                                 <img
-                                  src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}${el?.uploadPath}`}
+                                  src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${el?.uploadPath}`}
                                   className="img-fluid hero-image"
                                   alt="Property Main Image"
                                 />
@@ -463,7 +463,7 @@ const PropertyDetails = () => {
                           <SwiperSlide>
                             <img
                               key={i}
-                              src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}${floorImg?.uploadPath}`}
+                              src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${floorImg?.uploadPath}`}
                               className="img-fluid hero-image"
                               style={{ height: "100%" }}
                               alt="Property Main Image"
@@ -497,7 +497,7 @@ const PropertyDetails = () => {
                           <SwiperSlide>
                             <img
                               key={i}
-                              src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}${masterImg?.uploadPath}`}
+                              src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${masterImg?.uploadPath}`}
                               className="img-fluid hero-image"
                               style={{ height: "100%" }}
                               alt="Property Main Image"
@@ -593,7 +593,7 @@ const PropertyDetails = () => {
                                           }
                                         >
                                           <img
-                                            src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}${item?.unitPlanImg?.[0]?.uploadPath}`}
+                                            src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${item?.unitPlanImg?.[0]?.uploadPath}`}
                                             style={{ width: "80px" }}
                                           />
                                         </button>
@@ -775,7 +775,7 @@ const PropertyDetails = () => {
                   </h3>
                   <div className="d-flex ">
                     <img
-                      src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}${projectDetails?.groupDetails?.logo}`}
+                      src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${projectDetails?.groupDetails?.logo}`}
                       className="rounded"
                       height={100}
                       width={100}
@@ -826,7 +826,7 @@ const PropertyDetails = () => {
                     {projectDetails?.bankDetails?.map((el, i) => (
                       <SwiperSlide key={i}>
                         <img
-                          src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}${el?.logo}`}
+                          src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${el?.logo}`}
                           className="img-fluid hero-image"
                           alt={`Property Image ${i + 1}`}
                         />
@@ -1016,14 +1016,14 @@ const PropertyDetails = () => {
                   data-aos-delay="650"
                 >
                   <h4>Similar Properties</h4>
-                  <div style={{maxHeight:"500px",overflow:"auto"}}>
+                  <div style={{ maxHeight: "500px", overflow: "auto" }}>
                     {similarProject?.length > 0 &&
                       similarProject?.map((el, i) => {
                         return (
                           <Link to={`/properties/property-details/${el?._id}`}>
                             <div className="similar-property-item">
                               <img
-                                src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}${el?.projectImg?.[0]?.uploadPath}`}
+                                src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${el?.projectImg?.[0]?.uploadPath}`}
                                 className="img-fluid"
                                 alt="Similar Property"
                               />
@@ -1177,7 +1177,7 @@ const PropertyDetails = () => {
             </div>
             <div className="modal-body">
               <img
-                src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}${previewUnitImg}`}
+                src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${previewUnitImg}`}
                 height={500}
                 style={{ width: "100%" }}
               />
