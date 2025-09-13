@@ -282,7 +282,7 @@ const Properties = () => {
                             >
                               <div className="property-image-wrapper">
                                 <img
-                                  src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api/${firstImg}`}
+                                  src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${firstImg}`}
                                   alt="Luxury Villa"
                                   className="img-fluid"
                                 />
@@ -345,7 +345,7 @@ const Properties = () => {
                                 >
                                   <div className="agent-avatar">
                                     <img
-                                      src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api/${property?.groupDetails?.logo}`}
+                                      src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${property?.groupDetails?.logo}`}
                                       alt="Agent"
                                     />
                                   </div>
