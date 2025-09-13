@@ -1,24 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "./layout/Index";
+import Home from "./pages/Home";
+import NotFound from "./pages/NotFound";
+import About from "./pages/About";
+import Properties from "./pages/Properties";
+import Services from "./pages/Services";
+import Agents from "./pages/Agents";
+import Blog from "./pages/Blog";
+import PropertyDetails from "./pages/PropertyDetails";
+import ServiceDetials from "./pages/ServiceDetails";
+import BlogDetails from "./pages/BlogDetails";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import Contact from "./pages/Contact";
+import Toast from "./component/Toast";
+import Loading from "./component/Loading";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Toast />
+      <Loading />
+      <Routes>
+        {/* All other routes wrapped in Layout */}
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/properties" element={<Properties />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/agents" element={<Agents />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route
+            path="/properties/property-details/:id"
+            element={<PropertyDetails />}
+          />
+          <Route path="/service-details" element={<ServiceDetials />} />
+          <Route path="/blog-details" element={<BlogDetails />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
+    </Router>
   );
 }
 
