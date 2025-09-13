@@ -20,13 +20,12 @@ const Properties = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [activePage, setActivePage] = useState(1);
   const debouncedQuery = useDebounce(query, 250);
-  
+
   useEffect(() => {
     if (debouncedQuery && isSuggectionClick == false) {
       getSuggestionByCity(query);
     }
   }, [debouncedQuery]);
-
 
   useEffect(() => {
     onCityChange();
@@ -38,7 +37,7 @@ const Properties = () => {
       let payload = {
         city,
         page: activePage,
-        search:suggestionName
+        search: suggestionName,
       };
       const projectData = await apiFetch(
         "/api/project/getProjectByCity",
@@ -144,7 +143,6 @@ const Properties = () => {
       value: "+2cr",
     },
   ];
-
 
   return (
     <main className="main">
@@ -260,7 +258,6 @@ const Properties = () => {
                       </p>
                     </div>
                   </div>
-                 
                 </div>
               </div>
 
@@ -285,7 +282,7 @@ const Properties = () => {
                             >
                               <div className="property-image-wrapper">
                                 <img
-                                  src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}${firstImg}`}
+                                  src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api/${firstImg}`}
                                   alt="Luxury Villa"
                                   className="img-fluid"
                                 />
@@ -348,7 +345,7 @@ const Properties = () => {
                                 >
                                   <div className="agent-avatar">
                                     <img
-                                      src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}${property?.groupDetails?.logo}`}
+                                      src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api/${property?.groupDetails?.logo}`}
                                       alt="Agent"
                                     />
                                   </div>
@@ -676,8 +673,8 @@ const Properties = () => {
                   <div className="col-lg-6">
                     <div className="pagination-info">
                       <p>
-                        Showing <strong>1-6</strong> of <strong>{totalCount}</strong>{" "}
-                        properties
+                        Showing <strong>1-6</strong> of{" "}
+                        <strong>{totalCount}</strong> properties
                       </p>
                     </div>
                   </div>
