@@ -670,7 +670,7 @@ const PropertyDetails = () => {
                               aria-controls={`paymentScheme-collapseOne_${i}`}
                               style={{ background: "#d4d4d4" }}
                             >
-                              <i class="bi bi-credit-card-2-front fs-6 mx-2 align-content-center"></i>
+                              <i className="bi bi-credit-card-2-front fs-6 mx-2 align-content-center"></i>
                               {capitaliseWords(el?.scheme)}
                             </button>
                           </h2>
@@ -710,7 +710,7 @@ const PropertyDetails = () => {
                           aria-controls="pros-collapseOne"
                           style={{ background: "#0080002b" }}
                         >
-                          <i class="bi bi-hand-thumbs-up-fill fs-6 mx-2 align-content-center"></i>
+                          <i className="bi bi-hand-thumbs-up-fill fs-6 mx-2 align-content-center"></i>
                           Pros
                         </button>
                       </h2>
@@ -740,7 +740,7 @@ const PropertyDetails = () => {
                           aria-controls="cons-collapseTwo"
                           style={{ background: "#ff000030" }}
                         >
-                          <i class="bi bi-hand-thumbs-down-fill fs-6 mx-2 align-content-center"></i>
+                          <i className="bi bi-hand-thumbs-down-fill fs-6 mx-2 align-content-center"></i>
                           Cons
                         </button>
                       </h2>
@@ -1070,7 +1070,7 @@ const PropertyDetails = () => {
                           aria-controls={`pros-collapseOne_${i}`}
                           style={{ background: "#0080002b" }}
                         >
-                          <i class="bi bi-patch-question-fill fs-6 mx-2 align-content-center"></i>
+                          <i className="bi bi-patch-question-fill fs-6 mx-2 align-content-center"></i>
                           <h5 className="fw-semibold mb-0">{el?.question}</h5>
                         </button>
                       </h2>
