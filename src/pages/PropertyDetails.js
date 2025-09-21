@@ -106,13 +106,13 @@ const PropertyDetails = () => {
     });
   };
 
-  const submitRequest = async () => {
+  const submitRequestForBooking = async () => {
     if (userState == "" || userState == undefined || userState?.isLogin === 0) {
       return dispatch(
         isToastShow({
           isShow: true,
           type: "success",
-          message: "Before Submit login first",
+          message: "Before slot booking, please login first",
         })
       );
     }
@@ -123,7 +123,7 @@ const PropertyDetails = () => {
 
     try {
       const requestData = await apiFetch(
-        "/api/project/submitRequest",
+        "/api/project/submitRequestForBooking",
         bookingSlot
       );
       if (requestData?.success) {
@@ -136,6 +136,59 @@ const PropertyDetails = () => {
         );
 
         modalClose("bookingNowBackdrop");
+        dispatch(isLoadingShow({ isShow: false }));
+      } else {
+        dispatch(
+          isToastShow({
+            isShow: true,
+            type: "error",
+            message: requestData?.message,
+          })
+        );
+        dispatch(isLoadingShow({ isShow: false }));
+      }
+    } catch (error) {
+      dispatch(
+        isToastShow({
+          isShow: true,
+          type: "error",
+          message: "something went wrong",
+        })
+      );
+      dispatch(isLoadingShow({ isShow: false }));
+    }
+  };
+
+  const submitRequestForCall = async () => {
+    if (userState == "" || userState == undefined || userState?.isLogin === 0) {
+      return dispatch(
+        isToastShow({
+          isShow: true,
+          type: "success",
+          message: "Before call request, please login first",
+        })
+      );
+    }
+
+    dispatch(isLoadingShow({ isShow: true }));
+
+    try {
+      let payload = {
+        projectId: projectDetails?._id,
+        userId: userState?._id,
+      };
+      const requestData = await apiFetch(
+        "/api/project/submitRequestForCall",
+        payload
+      );
+      if (requestData?.success) {
+        dispatch(
+          isToastShow({
+            isShow: true,
+            type: "success",
+            message: requestData?.message,
+          })
+        );
         dispatch(isLoadingShow({ isShow: false }));
       } else {
         dispatch(
@@ -204,7 +257,7 @@ const PropertyDetails = () => {
                             return (
                               <SwiperSlide>
                                 <img
-                                  src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${el?.uploadPath}`}
+                                  src={el?.imageInfo?.url}
                                   className="img-fluid hero-image"
                                   alt="Property Main Image"
                                 />
@@ -337,7 +390,6 @@ const PropertyDetails = () => {
                         <span className="stat-number">
                           {reraNo?.length > 0 &&
                             reraNo?.map((el, i) => {
-                              console.log("el", el);
                               return (
                                 <div>
                                   <Link to="https://maharera.maharashtra.gov.in/">
@@ -463,7 +515,7 @@ const PropertyDetails = () => {
                           <SwiperSlide>
                             <img
                               key={i}
-                              src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${floorImg?.uploadPath}`}
+                              src={floorImg?.imageInfo?.url}
                               className="img-fluid hero-image"
                               style={{ height: "100%" }}
                               alt="Property Main Image"
@@ -497,7 +549,7 @@ const PropertyDetails = () => {
                           <SwiperSlide>
                             <img
                               key={i}
-                              src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${masterImg?.uploadPath}`}
+                              src={masterImg?.imageInfo?.url}
                               className="img-fluid hero-image"
                               style={{ height: "100%" }}
                               alt="Property Main Image"
@@ -588,12 +640,16 @@ const PropertyDetails = () => {
                                           data-bs-target="#previewUnitImgModal"
                                           onClick={() =>
                                             setPreviewUnitImg(
-                                              item?.unitPlanImg?.[0]?.uploadPath
+                                              item?.unitPlanImg?.[0]?.imageInfo
+                                                ?.url
                                             )
                                           }
                                         >
                                           <img
-                                            src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${item?.unitPlanImg?.[0]?.uploadPath}`}
+                                            src={
+                                              item?.unitPlanImg?.[0]?.imageInfo
+                                                ?.url
+                                            }
                                             style={{ width: "80px" }}
                                           />
                                         </button>
@@ -775,7 +831,7 @@ const PropertyDetails = () => {
                   </h3>
                   <div className="d-flex ">
                     <img
-                      src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${projectDetails?.groupDetails?.logo}`}
+                      src={projectDetails?.groupDetails?.imageInfo?.url}
                       className="rounded"
                       height={100}
                       width={100}
@@ -826,7 +882,7 @@ const PropertyDetails = () => {
                     {projectDetails?.bankDetails?.map((el, i) => (
                       <SwiperSlide key={i}>
                         <img
-                          src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${el?.logo}`}
+                          src={el?.imageInfo?.url}
                           className="img-fluid hero-image"
                           alt={`Property Image ${i + 1}`}
                         />
@@ -913,7 +969,10 @@ const PropertyDetails = () => {
                   </div> */}
 
                   <div className="agent-actions mt-3">
-                    <button className="btn btn-success w-100 mb-2">
+                    <button
+                      className="btn btn-success w-100 mb-2"
+                      onClick={() => submitRequestForCall()}
+                    >
                       <i className="bi bi-telephone"></i>
                       Call Now
                     </button>
@@ -1023,7 +1082,7 @@ const PropertyDetails = () => {
                           <Link to={`/properties/property-details/${el?._id}`}>
                             <div className="similar-property-item">
                               <img
-                                src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${el?.projectImg?.[0]?.uploadPath}`}
+                                src={el?.projectImg?.[0]?.imageInfo?.url}
                                 className="img-fluid"
                                 alt="Similar Property"
                               />
@@ -1177,7 +1236,7 @@ const PropertyDetails = () => {
             </div>
             <div className="modal-body">
               <img
-                src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${previewUnitImg}`}
+                src={previewUnitImg}
                 height={500}
                 style={{ width: "100%" }}
               />
@@ -1294,7 +1353,7 @@ const PropertyDetails = () => {
               </div>
             </div>
             <div className="modal-footer">
-              <div className="w-100" onClick={() => submitRequest()}>
+              <div className="w-100" onClick={() => submitRequestForBooking()}>
                 <Button
                   type="submit"
                   icon={<i className="bi bi-check-lg fs-4"></i>}

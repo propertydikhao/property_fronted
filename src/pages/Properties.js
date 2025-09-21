@@ -269,7 +269,10 @@ const Properties = () => {
                 >
                   <div className="row g-4">
                     {propertiesData?.map((property, i) => {
-                      let firstImg = property?.projectImg?.[0]?.uploadPath;
+                      console.log(
+                        "property?.imageInfo?.url",
+                        property?.projectImg
+                      );
                       return (
                         <div
                           className="col-lg-4 col-md-6"
@@ -282,7 +285,9 @@ const Properties = () => {
                             >
                               <div className="property-image-wrapper">
                                 <img
-                                  src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${firstImg}`}
+                                  src={
+                                    property?.projectImg?.[0]?.imageInfo?.url
+                                  }
                                   alt="Luxury Villa"
                                   className="img-fluid"
                                 />
@@ -345,7 +350,9 @@ const Properties = () => {
                                 >
                                   <div className="agent-avatar">
                                     <img
-                                      src={`${process.env.REACT_APP_PROPERTY_BACKEND_API}/api${property?.groupDetails?.logo}`}
+                                      src={
+                                        property?.groupDetails?.imageInfo?.url
+                                      }
                                       alt="Agent"
                                     />
                                   </div>
