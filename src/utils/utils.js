@@ -1,6 +1,13 @@
+import { isLoadingShow } from "../redux/slice/loadingSlice";
+import { store } from "../redux/store"
 const BASE_URL = process.env.REACT_APP_PROPERTY_BACKEND_API;
 
 export async function apiFetch(endpoint, data = {}, headers = {}) {
+  const { dispatch } = store;
+
+  dispatch(isLoadingShow(true));
+
+
   let options = {
     method: "POST",
     credentials: "include",
@@ -15,14 +22,20 @@ export async function apiFetch(endpoint, data = {}, headers = {}) {
     options.headers["Content-Type"] = "application/json";
   }
 
-  const response = await fetch(`${BASE_URL}${endpoint}`, options);
+  try {
+    const response = await fetch(`${BASE_URL}${endpoint}`, options);
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || "API Error");
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || "API Error");
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error;
+  } finally {
+    dispatch(isLoadingShow(false));
   }
-
-  return response.json();
 }
 
 export function capitaliseWords(str) {
