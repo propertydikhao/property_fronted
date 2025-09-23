@@ -632,7 +632,7 @@ const PropertyDetails = () => {
                                       {item?.parking}
                                     </td>
                                     <td style={{ alignContent: "center" }}>
-                                      {item?.unitPlanImg?.[0]?.uploadPath ? (
+                                      {item?.unitPlanImg?.[0]?.imageInfo ? (
                                         <button
                                           type="button"
                                           className="border"
@@ -1115,7 +1115,7 @@ const PropertyDetails = () => {
               {projectDetails?.faq?.map((el, i) => {
                 return (
                   <div
-                    className="accordion accordion-pros"
+                    className="accordion accordion-pros mb-3"
                     id="accordionfaqExample"
                   >
                     <div className="accordion-item">
@@ -1130,7 +1130,7 @@ const PropertyDetails = () => {
                           style={{ background: "#0080002b" }}
                         >
                           <i className="bi bi-patch-question-fill fs-6 mx-2 align-content-center"></i>
-                          <h5 className="fw-semibold mb-0">{el?.question}</h5>
+                          <h5 className="fw-semibold mb-0">{capitaliseWords(el?.question)}</h5>
                         </button>
                       </h2>
                       <div
