@@ -4,7 +4,7 @@ import {
   apiFetch,
   capitaliseWords,
   formatNumber,
-  formatRupees,
+  formatIndianNumber,
   modalClose,
 } from "../utils/utils";
 import { isToastShow } from "../redux/slice/toastSlice";
@@ -51,14 +51,6 @@ const PropertyDetails = () => {
       if (projectData?.success) {
         setProjectDetails(projectData?.data?.[0]);
         setSimilarProject(projectData?.similarProject);
-
-        dispatch(
-          isToastShow({
-            isShow: true,
-            type: "success",
-            message: projectData?.message,
-          })
-        );
       } else {
         dispatch(
           isToastShow({
@@ -136,7 +128,6 @@ const PropertyDetails = () => {
         );
 
         modalClose("bookingNowBackdrop");
-        dispatch(isLoadingShow({ isShow: false }));
       } else {
         dispatch(
           isToastShow({
@@ -145,7 +136,6 @@ const PropertyDetails = () => {
             message: requestData?.message,
           })
         );
-        dispatch(isLoadingShow({ isShow: false }));
       }
     } catch (error) {
       dispatch(
@@ -155,7 +145,6 @@ const PropertyDetails = () => {
           message: "something went wrong",
         })
       );
-      dispatch(isLoadingShow({ isShow: false }));
     }
   };
 
@@ -189,7 +178,6 @@ const PropertyDetails = () => {
             message: requestData?.message,
           })
         );
-        dispatch(isLoadingShow({ isShow: false }));
       } else {
         dispatch(
           isToastShow({
@@ -198,7 +186,6 @@ const PropertyDetails = () => {
             message: requestData?.message,
           })
         );
-        dispatch(isLoadingShow({ isShow: false }));
       }
     } catch (error) {
       dispatch(
@@ -208,7 +195,6 @@ const PropertyDetails = () => {
           message: "something went wrong",
         })
       );
-      dispatch(isLoadingShow({ isShow: false }));
     }
   };
 
@@ -228,67 +214,125 @@ const PropertyDetails = () => {
         </div>
       </div>
 
-      <section id="property-details" className="property-details section">
+      <section id="property-details" className="property-details section mt-4">
         <div className="container" data-aos="fade-up" data-aos-delay="100">
           <div className="row">
-            <div className="col-lg-7">
+            <div className="col-lg-12">
               <div
-                className="property-hero mb-5"
+                className="property-hero d-flex"
                 data-aos="fade-up"
                 data-aos-delay="200"
               >
-                <div className="hero-image-container">
-                  <div className="property-gallery-slider swiper init-swiper">
-                    <div className="swiper-wrapper">
-                      <div className="swiper-slide">
-                        <Swiper
-                          modules={[Autoplay, Navigation, Pagination]}
-                          spaceBetween={30}
-                          slidesPerView={1}
-                          loop={true}
-                          autoplay={{
-                            delay: 2500, // 2.5 sec
-                            disableOnInteraction: false,
-                          }}
-                          // navigation={true} // 👈 adds arrows
-                          pagination={{ clickable: true }} // 👈 adds dots
-                        >
-                          {projectDetails?.projectImg?.map((el, i) => {
-                            return (
-                              <SwiperSlide>
-                                <img
-                                  src={el?.imageInfo?.url}
-                                  className="img-fluid hero-image"
-                                  alt="Property Main Image"
-                                />
-                              </SwiperSlide>
-                            );
-                          })}
-                        </Swiper>
-                        <div className="hero-overlay">
-                          <div className="property-badge">
-                            {/* <span className="status-badge for-rent">
+                <div className="col-lg-7">
+                  <div className="hero-image-container">
+                    <div className="property-gallery-slider swiper init-swiper">
+                      <div className="swiper-wrapper">
+                        <div className="swiper-slide">
+                          <Swiper
+                            modules={[Autoplay, Navigation, Pagination]}
+                            spaceBetween={30}
+                            slidesPerView={1}
+                            loop={true}
+                            autoplay={{
+                              delay: 2500, // 2.5 sec
+                              disableOnInteraction: false,
+                            }}
+                            // navigation={true} // 👈 adds arrows
+                            pagination={{ clickable: true }} // 👈 adds dots
+                          >
+                            {projectDetails?.projectImg?.map((el, i) => {
+                              return (
+                                <SwiperSlide>
+                                  <img
+                                    src={el?.imageInfo?.url}
+                                    className="img-fluid hero-image"
+                                    alt="Property Main Image"
+                                  />
+                                </SwiperSlide>
+                              );
+                            })}
+                          </Swiper>
+                          <div className="hero-overlay">
+                            <div className="property-badge">
+                              {/* <span className="status-badge for-rent">
                               For Rent
                             </span> */}
-                            <span className="featured-badge">New Project</span>
+                              <span className="featured-badge">
+                                New Project
+                              </span>
+                            </div>
+                            <button
+                              type="button"
+                              className="virtual-tour-btn"
+                              data-bs-toggle="modal"
+                              data-bs-target="#exampleModal"
+                              onClick={() =>
+                                setProjectTour(projectDetails?.projectTour)
+                              }
+                            >
+                              <i className="bi bi-play-circle"></i>
+                              Project Tour
+                            </button>
                           </div>
-                          <button
-                            type="button"
-                            className="virtual-tour-btn"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal"
-                            onClick={() =>
-                              setProjectTour(projectDetails?.projectTour)
-                            }
-                          >
-                            <i className="bi bi-play-circle"></i>
-                            Project Tour
+                        </div>
+                      </div>
+                      {/* <div className="swiper-button-next"></div>
+                    <div className="swiper-button-prev"></div> */}
+                    </div>
+                  </div>
+                  <div className="property-info p-3">
+                    <div className="property-header">
+                      <h1 className="property-title">
+                        {capitaliseWords(projectDetails?.projectName)}
+                      </h1>
+                      <div className="property-meta">
+                        <span className="address">
+                          <i className="bi bi-geo-alt"></i>
+                          {projectDetails?.address}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-lg-5">
+                  <div
+                    className="actions-card mb-4"
+                    data-aos="fade-up"
+                    data-aos-delay="250"
+                  >
+                    <div className="action-buttons">
+                      <button
+                        className="btn btn-primary btn-lg w-100 mb-3"
+                        data-bs-toggle="modal"
+                        data-bs-target="#bookingNowBackdrop"
+                      >
+                        <i className="bi bi-calendar-check"></i>
+                        Booking Site Visit
+                      </button>
+
+                      <div className="row g-2">
+                        <div className="col-6">
+                          <button className="btn btn-outline-primary w-100">
+                            <i className="bi bi-heart"></i>
+                            Save
+                          </button>
+                        </div>
+                        <div className="col-6">
+                          <button className="btn btn-outline-primary w-100">
+                            <i className="bi bi-share"></i>
+                            Share
                           </button>
                         </div>
                       </div>
                     </div>
-                    {/* <div className="swiper-button-next"></div>
-                    <div className="swiper-button-prev"></div> */}
+                  </div>
+                  <div
+                    className="calculator-card mb-4"
+                    data-aos="fade-up"
+                    data-aos-delay="550"
+                  >
+                    <h4>EMI Calculator</h4>
+                    <EmiCalculator />
                   </div>
                 </div>
               </div>
@@ -297,22 +341,12 @@ const PropertyDetails = () => {
                 data-aos="fade-up"
                 data-aos-delay="300"
               >
-                <div className="property-header">
-                  <h1 className="property-title">
-                    {capitaliseWords(projectDetails?.projectName)}
-                  </h1>
-                  <div className="property-meta">
-                    <span className="address">
-                      <i className="bi bi-geo-alt"></i>
-                      {projectDetails?.address}
-                    </span>
-                  </div>
-                </div>
-
                 <div className="pricing-section">
                   <div className="main-price">
                     Start With{" "}
-                    {formatRupees(projectDetails?.configuration?.[0]?.allInc)}
+                    {formatIndianNumber(
+                      projectDetails?.configuration?.[0]?.allInc
+                    )}
                   </div>
                   <div className="price-breakdown">
                     <span className="deposit">
@@ -623,10 +657,10 @@ const PropertyDetails = () => {
                                       {item?.reraArea}
                                     </td>
                                     <td style={{ alignContent: "center" }}>
-                                      {formatRupees(item?.allInc)}
+                                      {formatIndianNumber(item?.allInc)}
                                     </td>
                                     <td style={{ alignContent: "center" }}>
-                                      {formatRupees(item?.downPayment)}
+                                      {formatIndianNumber(item?.downPayment)}
                                     </td>
                                     <td style={{ alignContent: "center" }}>
                                       {item?.parking}
@@ -893,217 +927,47 @@ const PropertyDetails = () => {
               </div>
             </div>
 
-            <div className="col-lg-5">
-              <div className="sticky-sidebar">
-                <div
-                  className="actions-card mb-4"
-                  data-aos="fade-up"
-                  data-aos-delay="250"
-                >
-                  <div className="action-buttons">
-                    <button
-                      className="btn btn-primary btn-lg w-100 mb-3"
-                      data-bs-toggle="modal"
-                      data-bs-target="#bookingNowBackdrop"
-                    >
-                      <i className="bi bi-calendar-check"></i>
-                      Booking Site Visit
-                    </button>
-
-                    <div className="row g-2">
-                      <div className="col-6">
-                        <button className="btn btn-outline-primary w-100">
-                          <i className="bi bi-heart"></i>
-                          Save
-                        </button>
-                      </div>
-                      <div className="col-6">
-                        <button className="btn btn-outline-primary w-100">
-                          <i className="bi bi-share"></i>
-                          Share
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  className="agent-card mb-4"
-                  data-aos="fade-up"
-                  data-aos-delay="350"
-                >
-                  <div className="agent-header">
-                    <div className="agent-avatar">
-                      <img
-                        src="/assets/img/person/person-f-12.webp"
-                        className="img-fluid"
-                        alt="Agent Photo"
-                      />
-                      <div className="online-status"></div>
-                    </div>
-                    <div className="agent-info">
-                      <h4>
-                        {capitaliseWords(
-                          projectDetails?.groupDetails?.groupName
-                        )}
-                      </h4>
-                      <p className="agent-role">
-                        {projectDetails?.groupDetails?.totalExperience} Years'
-                        Experiance
-                      </p>
-                      <p className="agent-role">
-                        {projectDetails?.groupDetails?.deliveredProject}{" "}
-                        Delivered Project
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* <div className="agent-contact">
-                    <div className="contact-item">
-                      <i className="bi bi-telephone"></i>
-                      <span>+1 (555) 234-5678</span>
-                    </div>
-                    <div className="contact-item">
-                      <i className="bi bi-envelope"></i>
-                      <span>s.johnson@example.com</span>
-                    </div>
-                  </div> */}
-
-                  <div className="agent-actions mt-3">
-                    <button
-                      className="btn btn-success w-100 mb-2"
-                      onClick={() => submitRequestForCall()}
-                    >
-                      <i className="bi bi-telephone"></i>
-                      Call Now
-                    </button>
-                    <button className="btn btn-outline w-100">
-                      <i className="bi bi-chat-dots"></i>
-                      Send Message
-                    </button>
-                  </div>
-                </div>
-                <div
-                  className="contact-form-card mb-4"
-                  data-aos="fade-up"
-                  data-aos-delay="450"
-                >
-                  <h4>Request Information</h4>
-                  <form
-                    action="forms/contact.php"
-                    method="post"
-                    className="php-email-form"
+            {/* <div className="col-lg-5">
+              <div
+                className="actions-card mb-4"
+                data-aos="fade-up"
+                data-aos-delay="250"
+              >
+                <div className="action-buttons">
+                  <button
+                    className="btn btn-primary btn-lg w-100 mb-3"
+                    data-bs-toggle="modal"
+                    data-bs-target="#bookingNowBackdrop"
                   >
-                    <div className="row">
-                      <div className="col-12 mb-3">
-                        <input
-                          type="text"
-                          name="name"
-                          className="form-control"
-                          placeholder="Full Name"
-                          required=""
-                        />
-                      </div>
-                      <div className="col-12 mb-3">
-                        <input
-                          type="email"
-                          name="email"
-                          className="form-control"
-                          placeholder="Email Address"
-                          required=""
-                        />
-                      </div>
-                      <div className="col-12 mb-3">
-                        <input
-                          type="tel"
-                          name="phone"
-                          className="form-control"
-                          placeholder="Phone Number"
-                        />
-                      </div>
-                      <div className="col-12 mb-3">
-                        <select
-                          name="subject"
-                          className="form-select"
-                          required=""
-                        >
-                          <option value="">I'm interested in...</option>
-                          <option value="Scheduling a viewing">
-                            Scheduling a viewing
-                          </option>
-                          <option value="Getting more information">
-                            Getting more information
-                          </option>
-                          <option value="Submitting an application">
-                            Submitting an application
-                          </option>
-                        </select>
-                      </div>
-                      <div className="col-12 mb-3">
-                        <textarea
-                          name="message"
-                          className="form-control"
-                          rows="4"
-                          placeholder="Additional questions or preferred viewing times..."
-                        ></textarea>
-                      </div>
+                    <i className="bi bi-calendar-check"></i>
+                    Booking Site Visit
+                  </button>
+
+                  <div className="row g-2">
+                    <div className="col-6">
+                      <button className="btn btn-outline-primary w-100">
+                        <i className="bi bi-heart"></i>
+                        Save
+                      </button>
                     </div>
-
-                    <div className="loading">Loading</div>
-                    <div className="error-message"></div>
-                    <div className="sent-message">
-                      Your request has been sent successfully!
+                    <div className="col-6">
+                      <button className="btn btn-outline-primary w-100">
+                        <i className="bi bi-share"></i>
+                        Share
+                      </button>
                     </div>
-
-                    <button type="submit" className="btn btn-primary w-100">
-                      Send Request
-                    </button>
-                  </form>
-                </div>
-
-                <div
-                  className="calculator-card mb-4"
-                  data-aos="fade-up"
-                  data-aos-delay="550"
-                >
-                  <h4>EMI Calculator</h4>
-                  <EmiCalculator />
-                </div>
-
-                <div
-                  className="similar-properties"
-                  data-aos="fade-up"
-                  data-aos-delay="650"
-                >
-                  <h4>Similar Properties</h4>
-                  <div style={{ maxHeight: "500px", overflow: "auto" }}>
-                    {similarProject?.length > 0 &&
-                      similarProject?.map((el, i) => {
-                        return (
-                          <Link to={`/properties/property-details/${el?._id}`}>
-                            <div className="similar-property-item">
-                              <img
-                                src={el?.projectImg?.[0]?.imageInfo?.url}
-                                className="img-fluid"
-                                alt="Similar Property"
-                              />
-                              <div className="similar-info">
-                                <h6>{capitaliseWords(el?.projectName)}</h6>
-                                <p className="similar-price">
-                                  {formatRupees(el?.configuration?.[0]?.allInc)}
-                                </p>
-                                <p className="similar-specs">
-                                  {el?.configuration?.length} bed •
-                                  {formatNumber(el?.reraAreaMin)} sq ft
-                                </p>
-                              </div>
-                            </div>
-                          </Link>
-                        );
-                      })}
                   </div>
                 </div>
               </div>
-            </div>
+              <div
+                className="calculator-card mb-4"
+                data-aos="fade-up"
+                data-aos-delay="550"
+              >
+                <h4>EMI Calculator</h4>
+                <EmiCalculator />
+              </div>
+            </div> */}
           </div>
 
           <div className="mt-5" data-aos="fade-up" data-aos-delay="200">
@@ -1130,7 +994,9 @@ const PropertyDetails = () => {
                           style={{ background: "#0080002b" }}
                         >
                           <i className="bi bi-patch-question-fill fs-6 mx-2 align-content-center"></i>
-                          <h5 className="fw-semibold mb-0">{capitaliseWords(el?.question)}</h5>
+                          <h5 className="fw-semibold mb-0">
+                            {capitaliseWords(el?.question)}
+                          </h5>
                         </button>
                       </h2>
                       <div
@@ -1178,6 +1044,92 @@ const PropertyDetails = () => {
                 </div>
               </div>
             </div>
+          </div>
+          <div
+            className="similar-properties my-4"
+            data-aos="fade-up"
+            data-aos-delay="650"
+          >
+            <h4>Similar Properties</h4>
+            <Swiper
+              modules={[Autoplay, Navigation, Pagination]}
+              slidesPerView={2}
+              loop={false}
+              autoplay={{
+                delay: 2500, // 2.5 sec
+                disableOnInteraction: false,
+              }}
+              // navigation={true} // 👈 optional arrows
+              pagination={{ clickable: true }} // 👈 adds dots
+            >
+              {similarProject?.length > 0 &&
+                similarProject?.map((el, i) => {
+                  return (
+                    <SwiperSlide key={i}>
+                      <Link to={`/properties/property-details/${el?._id}`}>
+                        <div className="cardDiv selected-project-div col-lg-6 col-sm-12 d-flex">
+                          <div className="project-img">
+                            <img
+                              src={el?.projectImg?.[0]?.imageInfo?.url}
+                              className="img-fuild"
+                            />
+                          </div>
+                          <div className="project-info">
+                            <h4>{el?.projectName}</h4>
+                            <div className="d-flex justify-content-between">
+                              <span>
+                                By
+                                <span className="group-name mx-2">
+                                  {el?.groupDetails?.groupName}
+                                </span>
+                              </span>
+                              <span className="mx-2">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                {capitaliseWords(el?.city)}
+                              </span>
+                            </div>
+                            <div className="d-flex justify-content-between mt-2">
+                              {el?.configuration?.map((conf, i) => {
+                                return (
+                                  <span>
+                                    {conf?.bhk}BHK{" "}
+                                    {el?.configuration?.length > 1 && ","}
+                                  </span>
+                                );
+                              })}
+
+                              <span className="mx-2">
+                                <i class="bi bi-textarea me-1"></i>
+                                {el?.configuration?.[0]?.reraArea} sqFt
+                              </span>
+                            </div>
+                            <div className="d-flex justify-content-between mt-2">
+                              <span>
+                                <i class="bi bi-house me-1"></i>
+                                {el?.possesionByDeveloper} Possesion Date
+                              </span>
+                            </div>
+                            <div className="d-flex justify-content-between mt-2">
+                              <span>
+                                <i class="bi bi-currency-rupee"></i>
+                                {formatIndianNumber(
+                                  el?.configuration?.[0]?.allInc
+                                )}{" "}
+                                - <i class="bi bi-currency-rupee"></i>
+                                {formatIndianNumber(
+                                  el?.configuration?.[
+                                    el?.configuration?.length - 1
+                                  ]?.allInc
+                                )}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    </SwiperSlide>
+                  );
+                })}
+            </Swiper>
           </div>
         </div>
       </section>
@@ -1287,7 +1239,7 @@ const PropertyDetails = () => {
                       aria-selected="true"
                       onClick={() => (bookingMode.current = "offline")}
                     >
-                      <h6>Pick Your Date/Time</h6>
+                      <h6>Book Site Visit</h6>
                     </button>
                   </li>
 

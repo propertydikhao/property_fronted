@@ -66,3 +66,25 @@ export const modalClose = (modalId) => {
     }, 500);
   }
 };
+
+export const formatDate = (epoch) => {
+  const d = new Date(epoch.toString().length === 10 ? epoch * 1000 : epoch);
+
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  const hh = String(d.getHours()).padStart(2, "0");
+  const min = String(d.getMinutes()).padStart(2, "0");
+  const ss = String(d.getSeconds()).padStart(2, "0");
+
+  return `${dd}-${mm}-${yyyy}` || "-";
+};
+
+export const formatIndianNumber=(num)=> {
+  if (num >= 10000000) {
+    return (num / 10000000).toFixed(2).replace(/\.00$/, "") + " Cr";
+  } else if (num >= 100000) {
+    return (num / 100000).toFixed(2).replace(/\.00$/, "") + " Lac";
+  }
+  return num?.toString();
+}

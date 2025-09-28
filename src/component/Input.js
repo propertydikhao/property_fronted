@@ -11,9 +11,11 @@ const Input = ({
 }) => {
   return (
     <div className="search-field">
-      <label htmlFor={id} className="field-label">
-        {label}
-      </label>
+      {label && (
+        <label htmlFor={id} className="field-label">
+          {label}
+        </label>
+      )}
       <input
         type={type}
         id={id}

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import Input from "../component/Input";
-import { apiFetch, formatNumber, formatRupees } from "../utils/utils";
+import { apiFetch, formatIndianNumber, formatNumber } from "../utils/utils";
 import { isToastShow } from "../redux/slice/toastSlice";
 import useDebounce from "../utils/debounce";
 import Dropdown from "../component/Dropdown";
@@ -269,10 +269,7 @@ const Properties = () => {
                 >
                   <div className="row g-4">
                     {propertiesData?.map((property, i) => {
-                      console.log(
-                        "property?.imageInfo?.url",
-                        property?.projectImg
-                      );
+                      
                       return (
                         <div
                           className="col-lg-4 col-md-6"
@@ -305,7 +302,7 @@ const Properties = () => {
                               <div className="property-details">
                                 <div className="property-header">
                                   <div className="property-price">
-                                    {formatRupees(
+                                    {formatIndianNumber(
                                       property?.configuration?.[0]?.allInc
                                     )}
                                   </div>

@@ -8,9 +8,7 @@ import Toast from "../component/Toast";
 import { useDispatch, useSelector } from "react-redux";
 import { isToastShow } from "../redux/slice/toastSlice";
 import { userInfo } from "../redux/slice/userSlice";
-import Loading from "../component/Loading";
 import { isLoadingShow } from "../redux/slice/loadingSlice";
-import UserLocation from "../utils/userLocation";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -45,7 +43,6 @@ const Header = () => {
           setMobileNo("");
           setOTP("");
           modalClose("loginstaticBackdrop");
-          dispatch(isLoadingShow({ isShow: false }));
         } else {
           dispatch(
             isToastShow({
@@ -54,7 +51,6 @@ const Header = () => {
               message: userData?.message,
             })
           );
-          dispatch(isLoadingShow({ isShow: false }));
         }
       } else {
         dispatch(
@@ -223,120 +219,262 @@ const Header = () => {
             </svg>
             <h1 className="sitename">HomeSpace</h1>
           </Link>
+
           <nav id="navmenu" className="navmenu">
             <ul>
-              <li onClick={() => setActiveMenu("home")}>
-                <Link to="/" className={activeMenu === "home" ? "active" : ""}>
-                  Home
-                </Link>
-              </li>
-
-              <li onClick={() => setActiveMenu("about")}>
-                <Link
-                  to="/about"
-                  className={activeMenu === "about" ? "active" : ""}
-                >
-                  About
-                </Link>
-              </li>
-              <li onClick={() => setActiveMenu("properties")}>
-                <Link
-                  to="/properties"
-                  className={activeMenu === "properties" ? "active" : ""}
-                >
-                  Properties
-                </Link>
-              </li>
-              <li onClick={() => setActiveMenu("services")}>
-                <Link
-                  to="/services"
-                  className={activeMenu === "services" ? "active" : ""}
-                >
-                  Services
-                </Link>
-              </li>
-              <li onClick={() => setActiveMenu("agents")}>
-                <Link
-                  to="/agents"
-                  className={activeMenu === "agents" ? "active" : ""}
-                >
-                  Agents
-                </Link>
-              </li>
-              <li onClick={() => setActiveMenu("blog")}>
-                <Link
-                  to="/blog"
-                  className={activeMenu === "blog" ? "active" : ""}
-                >
-                  Blog
-                </Link>
-              </li>
-              <li onClick={() => setActiveMenu("contact")}>
-                <Link
-                  to="/contact"
-                  className={activeMenu === "contact" ? "active" : ""}
-                >
-                  Contact
-                </Link>
-              </li>
-              <hr className="text-black" />
-              {userState?.isLogin ? (
-                <li className="dropdown">
-                  <Link to="/#">
-                    {!useState?.uploadPath ? (
-                      <div className="d-flex align-items-center">
-                        <span className="nameAvatar me-2">s</span>
-                        <span>{capitaliseWords(userState?.fullName)}</span>
-                      </div>
-                    ) : (
-                      <img alt="Agent Profile" src="" />
-                    )}
-                    <i className="bi bi-chevron-down toggle-dropdown"></i>
-                  </Link>
-                  <ul>
-                    <li>
-                      <Link to="/profile">Profile</Link>
+              {/* desktop menu */}
+              <li class="dropdown hideInMobile">
+                <a href="#">
+                  <i class="bi bi-list toggle-dropdown fs-3"></i>
+                </a>
+                <ul>
+                  <li onClick={() => setActiveMenu("home")}>
+                    <Link
+                      to="/"
+                      className={activeMenu === "home" ? "active" : ""}
+                    >
+                      Home
+                    </Link>
+                  </li>
+                  <li onClick={() => setActiveMenu("about")}>
+                    <Link
+                      to="/about"
+                      className={activeMenu === "about" ? "active" : ""}
+                    >
+                      About
+                    </Link>
+                  </li>
+                  <li onClick={() => setActiveMenu("properties")}>
+                    <Link
+                      to="/properties"
+                      className={activeMenu === "properties" ? "active" : ""}
+                    >
+                      Properties
+                    </Link>
+                  </li>
+                  <li onClick={() => setActiveMenu("services")}>
+                    <Link
+                      to="/services"
+                      className={activeMenu === "services" ? "active" : ""}
+                    >
+                      Services
+                    </Link>
+                  </li>
+                  <li onClick={() => setActiveMenu("blog")}>
+                    <Link
+                      to="/blog"
+                      className={activeMenu === "blog" ? "active" : ""}
+                    >
+                      Blog
+                    </Link>
+                  </li>
+                  <li onClick={() => setActiveMenu("contact")}>
+                    <Link
+                      to="/contact"
+                      className={activeMenu === "contact" ? "active" : ""}
+                    >
+                      Contact
+                    </Link>
+                  </li>
+                  <hr className="text-black" />
+                  {userState?.isLogin ? (
+                    <li className="dropdown">
+                      <Link to="/#">
+                        {!useState?.uploadPath ? (
+                          <div className="d-flex align-items-center">
+                            <span className="nameAvatar me-2">s</span>
+                            <span>{capitaliseWords(userState?.fullName)}</span>
+                          </div>
+                        ) : (
+                          <img alt="Agent Profile" src="" />
+                        )}
+                        <i className="bi bi-chevron-down toggle-dropdown"></i>
+                      </Link>
+                      <ul>
+                        <li>
+                          <Link to="/profile">Profile</Link>
+                        </li>
+                        <li>
+                          <Link to="/#" onClick={() => logout()}>
+                            <div className="d-flex align-items-center">
+                              Logout
+                              <i className="bi bi-box-arrow-in-right fs-5 me-1"></i>
+                            </div>
+                          </Link>
+                        </li>
+                      </ul>
                     </li>
-                    <li>
-                      <Link to="/#" onClick={() => logout()}>
+                  ) : (
+                    <>
+                      <li>
+                        <Link to="#">
+                          <div className="d-flex align-items-center">
+                            <span
+                              data-bs-toggle="modal"
+                              data-bs-target="#loginstaticBackdrop"
+                            >
+                              Login
+                            </span>
+                            <i className="bi bi-box-arrow-in-right me-1"></i>
+                          </div>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="#">
+                          <div className="d-flex align-items-center">
+                            <span
+                              data-bs-toggle="modal"
+                              data-bs-target="#registerstaticBackdrop"
+                            >
+                              Register
+                            </span>
+                            <i className="bi bi-box-arrow-in-right me-1"></i>
+                          </div>
+                        </Link>
+                      </li>
+                    </>
+                  )}
+                  <hr className="text-black" />
+                  <div className="social-links d-flex">
+                    <a href="">
+                      <i className="bi bi-twitter-x fs-6"></i>
+                    </a>
+                    <a href="">
+                      <i className="bi bi-facebook fs-6"></i>
+                    </a>
+                    <a href="">
+                      <i className="bi bi-instagram fs-6"></i>
+                    </a>
+                    <a href="">
+                      <i className="bi bi-linkedin fs-6"></i>
+                    </a>
+                  </div>
+                </ul>
+              </li>
+              {/* mobile menu */}
+              <div className="d-lg-none">
+                <li onClick={() => setActiveMenu("home")}>
+                  <Link
+                    to="/"
+                    className={activeMenu === "home" ? "active" : ""}
+                  >
+                    Home
+                  </Link>
+                </li>
+                <li onClick={() => setActiveMenu("about")}>
+                  <Link
+                    to="/about"
+                    className={activeMenu === "about" ? "active" : ""}
+                  >
+                    About
+                  </Link>
+                </li>
+                <li onClick={() => setActiveMenu("properties")}>
+                  <Link
+                    to="/properties"
+                    className={activeMenu === "properties" ? "active" : ""}
+                  >
+                    Properties
+                  </Link>
+                </li>
+                <li onClick={() => setActiveMenu("services")}>
+                  <Link
+                    to="/services"
+                    className={activeMenu === "services" ? "active" : ""}
+                  >
+                    Services
+                  </Link>
+                </li>
+                <li onClick={() => setActiveMenu("blog")}>
+                  <Link
+                    to="/blog"
+                    className={activeMenu === "blog" ? "active" : ""}
+                  >
+                    Blog
+                  </Link>
+                </li>
+                <li onClick={() => setActiveMenu("contact")}>
+                  <Link
+                    to="/contact"
+                    className={activeMenu === "contact" ? "active" : ""}
+                  >
+                    Contact
+                  </Link>
+                </li>
+                <hr className="text-black" />
+                {userState?.isLogin ? (
+                  <li className="dropdown">
+                    <Link to="/#">
+                      {!useState?.uploadPath ? (
                         <div className="d-flex align-items-center">
-                          Logout
-                          <i className="bi bi-box-arrow-in-right fs-5 me-1"></i>
+                          <span className="nameAvatar me-2">s</span>
+                          <span>{capitaliseWords(userState?.fullName)}</span>
+                        </div>
+                      ) : (
+                        <img alt="Agent Profile" src="" />
+                      )}
+                      <i className="bi bi-chevron-down toggle-dropdown"></i>
+                    </Link>
+                    <ul>
+                      <li>
+                        <Link to="/profile">Profile</Link>
+                      </li>
+                      <li>
+                        <Link to="/#" onClick={() => logout()}>
+                          <div className="d-flex align-items-center">
+                            Logout
+                            <i className="bi bi-box-arrow-in-right fs-5 me-1"></i>
+                          </div>
+                        </Link>
+                      </li>
+                    </ul>
+                  </li>
+                ) : (
+                  <>
+                    <li>
+                      <Link to="#">
+                        <div className="d-flex align-items-center">
+                          <span
+                            data-bs-toggle="modal"
+                            data-bs-target="#loginstaticBackdrop"
+                          >
+                            Login
+                          </span>
+                          <i className="bi bi-box-arrow-in-right me-1"></i>
                         </div>
                       </Link>
                     </li>
-                  </ul>
-                </li>
-              ) : (
-                <>
-                  <li>
-                    <Link to="#">
-                      <div className="d-flex align-items-center">
-                        <span
-                          data-bs-toggle="modal"
-                          data-bs-target="#loginstaticBackdrop"
-                        >
-                          Login
-                        </span>
-                        <i className="bi bi-box-arrow-in-right me-1"></i>
-                      </div>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="#">
-                      <div className="d-flex align-items-center">
-                        <span
-                          data-bs-toggle="modal"
-                          data-bs-target="#registerstaticBackdrop"
-                        >
-                          Register
-                        </span>
-                        <i className="bi bi-box-arrow-in-right me-1"></i>
-                      </div>
-                    </Link>
-                  </li>
-                </>
-              )}
+                    <li>
+                      <Link to="#">
+                        <div className="d-flex align-items-center">
+                          <span
+                            data-bs-toggle="modal"
+                            data-bs-target="#registerstaticBackdrop"
+                          >
+                            Register
+                          </span>
+                          <i className="bi bi-box-arrow-in-right me-1"></i>
+                        </div>
+                      </Link>
+                    </li>
+                    <hr className="text-black" />
+                    <div className="social-links d-flex">
+                      <a href="">
+                        <i className="bi bi-twitter-x fs-6"></i>
+                      </a>
+                      <a href="">
+                        <i className="bi bi-facebook fs-6"></i>
+                      </a>
+                      <a href="">
+                        <i className="bi bi-instagram fs-6"></i>
+                      </a>
+                      <a href="">
+                        <i className="bi bi-linkedin fs-6"></i>
+                      </a>
+                    </div>
+                  </>
+                )}
+              </div>
             </ul>
             <i className="mobile-nav-toggle d-xl-none bi bi-list"></i>
           </nav>

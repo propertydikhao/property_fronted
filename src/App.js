@@ -5,7 +5,6 @@ import NotFound from "./pages/NotFound";
 import About from "./pages/About";
 import Properties from "./pages/Properties";
 import Services from "./pages/Services";
-import Agents from "./pages/Agents";
 import Blog from "./pages/Blog";
 import PropertyDetails from "./pages/PropertyDetails";
 import ServiceDetials from "./pages/ServiceDetails";
@@ -28,14 +27,13 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/properties" element={<Properties />} />
           <Route path="/services" element={<Services />} />
-          <Route path="/agents" element={<Agents />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogDetails />} />
           <Route
             path="/properties/property-details/:id"
             element={<PropertyDetails />}
           />
           <Route path="/service-details" element={<ServiceDetials />} />
-          <Route path="/blog-details" element={<BlogDetails />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/contact" element={<Contact />} />
