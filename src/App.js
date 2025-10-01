@@ -9,11 +9,12 @@ import Blog from "./pages/Blog";
 import PropertyDetails from "./pages/PropertyDetails";
 import ServiceDetials from "./pages/ServiceDetails";
 import BlogDetails from "./pages/BlogDetails";
-import Terms from "./pages/Terms";
+import Terms from "./pages/Disclaimer";
 import Privacy from "./pages/Privacy";
 import Contact from "./pages/Contact";
 import Toast from "./component/Toast";
 import Loading from "./component/Loading";
+import Disclaimer from "./pages/Disclaimer";
 
 function App() {
   return (
@@ -24,7 +25,8 @@ function App() {
         {/* All other routes wrapped in Layout */}
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
+          <Route path="/privacy-policy" element={<Privacy />} />
+          <Route path="/disclaimer" element={<Disclaimer />} />
           <Route path="/properties" element={<Properties />} />
           <Route path="/services" element={<Services />} />
           <Route path="/blog" element={<Blog />} />
@@ -34,8 +36,6 @@ function App() {
             element={<PropertyDetails />}
           />
           <Route path="/service-details" element={<ServiceDetials />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/privacy" element={<Privacy />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
         </Route>

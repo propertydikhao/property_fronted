@@ -68,7 +68,7 @@ export const modalClose = (modalId) => {
 };
 
 export const formatDate = (epoch) => {
-  const d = new Date(epoch.toString().length === 10 ? epoch * 1000 : epoch);
+  const d = new Date(epoch?.toString().length === 10 ? epoch * 1000 : epoch);
 
   const yyyy = d.getFullYear();
   const mm = String(d.getMonth() + 1).padStart(2, "0");

@@ -1,7 +1,72 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Avatar } from "../component/Avatar";
+import { useEffect, useState } from "react";
+import { apiFetch, formatDate } from "../utils/utils";
+import { useDispatch } from "react-redux";
+import { isToastShow } from "../redux/slice/toastSlice";
 
 const BlogDetails = () => {
+  const { slug } = useParams();
+  const dispatch = useDispatch();
+  const [blogDetail, setBlogDetail] = useState('');
+
+
+  useEffect(() => {
+    fetchBlogDetails(slug);
+  }, [slug]);
+
+  const fetchBlogDetails = async (slug) => {
+    if (slug) {
+      try {
+        let payload = {
+          blogSlug: slug,
+        };
+        const blogData = await apiFetch(
+          "/api/blog/getBlogBySlug",
+          payload
+        );
+        if (blogData?.success) {
+          setBlogDetail(blogData?.data?.[0]);
+        } else {
+          dispatch(
+            isToastShow({
+              isShow: true,
+              type: "error",
+              message: blogData?.message,
+            })
+          );
+        }
+      } catch (error) {
+        dispatch(
+          isToastShow({
+            isShow: true,
+            type: "error",
+            message: "something went wrong",
+          })
+        );
+      }
+    }
+  };
+
+  
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'hello',
+          text: `Check out this blog: ${"title"}`,
+          url: "url" || window.location.href,
+        });
+        console.log("Blog shared successfully!");
+      } catch (err) {
+        console.error("Share failed:", err);
+      }
+    } else {
+      // fallback
+      alert("Sharing not supported in this browser. Copy link instead!");
+    }
+  };
+
   return (
     <main className="main">
       <div className="page-title light-background">
@@ -22,8 +87,7 @@ const BlogDetails = () => {
           <article className="article">
             <div className="article-header">
               <h1 className="title" data-aos="fade-up" data-aos-delay="100">
-                The Evolution of User Interface Design: From Skeuomorphism to
-                Neumorphism
+                {blogDetail?.blogTitle}
               </h1>
 
               <div
@@ -40,7 +104,8 @@ const BlogDetails = () => {
                 </div>
                 <div className="post-info">
                   <span>
-                    <i className="bi bi-calendar4-week"></i> April 15, 2025
+                    <i className="bi bi-calendar4-week"></i>{" "}
+                    {formatDate(blogDetail?.insert_date)}
                   </span>
                 </div>
               </div>
@@ -48,18 +113,21 @@ const BlogDetails = () => {
 
             <div className="article-featured-image" data-aos="zoom-in">
               <img
-                src="assets/img/blog/blog-hero-1.webp"
-                alt="UI Design Evolution"
+                src={blogDetail?.imageInfo?.url}
+                alt={blogDetail?.imageInfo?.name}
                 className="img-fluid"
               />
             </div>
 
-            <div>{/* blog details */}</div>
+            <div
+              className="lead"
+              dangerouslySetInnerHTML={{ __html: blogDetail?.blogDescription }}
+            />
 
             <div className="article-footer" data-aos="fade-up">
               <div className="share-article">
                 <h4>Share this article</h4>
-                <div className="share-buttons">
+                <div onClick={handleShare} className="share-buttons">
                   <Link to="#" className="share-button twitter">
                     <i className="bi bi-twitter-x"></i>
                     <span>Share on X</span>

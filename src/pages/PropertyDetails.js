@@ -148,56 +148,6 @@ const PropertyDetails = () => {
     }
   };
 
-  const submitRequestForCall = async () => {
-    if (userState == "" || userState == undefined || userState?.isLogin === 0) {
-      return dispatch(
-        isToastShow({
-          isShow: true,
-          type: "success",
-          message: "Before call request, please login first",
-        })
-      );
-    }
-
-    dispatch(isLoadingShow({ isShow: true }));
-
-    try {
-      let payload = {
-        projectId: projectDetails?._id,
-        userId: userState?._id,
-      };
-      const requestData = await apiFetch(
-        "/api/project/submitRequestForCall",
-        payload
-      );
-      if (requestData?.success) {
-        dispatch(
-          isToastShow({
-            isShow: true,
-            type: "success",
-            message: requestData?.message,
-          })
-        );
-      } else {
-        dispatch(
-          isToastShow({
-            isShow: true,
-            type: "error",
-            message: requestData?.message,
-          })
-        );
-      }
-    } catch (error) {
-      dispatch(
-        isToastShow({
-          isShow: true,
-          type: "error",
-          message: "something went wrong",
-        })
-      );
-    }
-  };
-
   return (
     <main className="main">
       <div className="page-title light-background">
@@ -1084,7 +1034,7 @@ const PropertyDetails = () => {
                                 </span>
                               </span>
                               <span className="mx-2">
-                                <i class="bi bi-geo-alt me-1"></i>
+                                <i className="bi bi-geo-alt me-1"></i>
                                 {capitaliseWords(el?.city)}
                               </span>
                             </div>
@@ -1099,23 +1049,23 @@ const PropertyDetails = () => {
                               })}
 
                               <span className="mx-2">
-                                <i class="bi bi-textarea me-1"></i>
+                                <i className="bi bi-textarea me-1"></i>
                                 {el?.configuration?.[0]?.reraArea} sqFt
                               </span>
                             </div>
                             <div className="d-flex justify-content-between mt-2">
                               <span>
-                                <i class="bi bi-house me-1"></i>
+                                <i className="bi bi-house me-1"></i>
                                 {el?.possesionByDeveloper} Possesion Date
                               </span>
                             </div>
                             <div className="d-flex justify-content-between mt-2">
                               <span>
-                                <i class="bi bi-currency-rupee"></i>
+                                <i className="bi bi-currency-rupee"></i>
                                 {formatIndianNumber(
                                   el?.configuration?.[0]?.allInc
                                 )}{" "}
-                                - <i class="bi bi-currency-rupee"></i>
+                                - <i className="bi bi-currency-rupee"></i>
                                 {formatIndianNumber(
                                   el?.configuration?.[
                                     el?.configuration?.length - 1

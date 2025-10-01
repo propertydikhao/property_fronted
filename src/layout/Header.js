@@ -217,15 +217,20 @@ const Header = () => {
                 ></path>
               </g>
             </svg>
-            <h1 className="sitename">HomeSpace</h1>
+            <h1 className="sitename">PropertyDikhao</h1>
           </Link>
 
-          <nav id="navmenu" className="navmenu">
+          <nav id="navmenu" className="navmenu d-flex">
+            {!userState?.isLogin && (
+              <span className="text-white align-content-center fs-5">
+                Sign In
+              </span>
+            )}
             <ul>
               {/* desktop menu */}
-              <li class="dropdown hideInMobile">
+              <li className="dropdown hideInMobile">
                 <a href="#">
-                  <i class="bi bi-list toggle-dropdown fs-3"></i>
+                  <i className="bi bi-list toggle-dropdown fs-3"></i>
                 </a>
                 <ul>
                   <li onClick={() => setActiveMenu("home")}>
@@ -236,12 +241,22 @@ const Header = () => {
                       Home
                     </Link>
                   </li>
-                  <li onClick={() => setActiveMenu("about")}>
+                  <li onClick={() => setActiveMenu("privacy-policy")}>
                     <Link
-                      to="/about"
-                      className={activeMenu === "about" ? "active" : ""}
+                      to="/privacy-policy"
+                      className={
+                        activeMenu === "privacy-policy" ? "active" : ""
+                      }
                     >
-                      About
+                      Privacy Policy
+                    </Link>
+                  </li>
+                  <li onClick={() => setActiveMenu("disclaimer")}>
+                    <Link
+                      to="/disclaimer"
+                      className={activeMenu === "disclaimer" ? "active" : ""}
+                    >
+                      Disclaimer
                     </Link>
                   </li>
                   <li onClick={() => setActiveMenu("properties")}>
@@ -336,18 +351,33 @@ const Header = () => {
                   )}
                   <hr className="text-black" />
                   <div className="social-links d-flex">
-                    <a href="">
-                      <i className="bi bi-twitter-x fs-6"></i>
-                    </a>
-                    <a href="">
+                    <Link
+                      to="https://www.youtube.com/@propertydikhao"
+                      target="_blank"
+                    >
+                      <i className="bi bi-youtube fs-6"></i>
+                    </Link>
+                    <Link
+                      to="https://www.facebook.com/propertydikhao"
+                      target="_blank"
+                    >
                       <i className="bi bi-facebook fs-6"></i>
-                    </a>
-                    <a href="">
+                    </Link>
+                    <Link
+                      to="https://www.instagram.com/propertydikhao/"
+                      target="_blank"
+                    >
                       <i className="bi bi-instagram fs-6"></i>
-                    </a>
-                    <a href="">
+                    </Link>
+                    <Link
+                      to="https://www.linkedin.com/in/property-dikhao-617a281b5/"
+                      target="_blank"
+                    >
                       <i className="bi bi-linkedin fs-6"></i>
-                    </a>
+                    </Link>
+                    <Link to="https://x.com/prpertydikhao" target="_blank">
+                      <i className="bi bi-twitter-x fs-6"></i>
+                    </Link>
                   </div>
                 </ul>
               </li>
@@ -361,12 +391,20 @@ const Header = () => {
                     Home
                   </Link>
                 </li>
-                <li onClick={() => setActiveMenu("about")}>
+                <li onClick={() => setActiveMenu("privacy-policy")}>
                   <Link
-                    to="/about"
-                    className={activeMenu === "about" ? "active" : ""}
+                    to="/privacy-policy"
+                    className={activeMenu === "privacy-policy" ? "active" : ""}
                   >
-                    About
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li onClick={() => setActiveMenu("disclaimer")}>
+                  <Link
+                    to="/disclaimer"
+                    className={activeMenu === "disclaimer" ? "active" : ""}
+                  >
+                    Disclaimer
                   </Link>
                 </li>
                 <li onClick={() => setActiveMenu("properties")}>

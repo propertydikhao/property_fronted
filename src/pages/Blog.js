@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { apiFetch, formatDate } from "../utils/utils";
 import { isToastShow } from "../redux/slice/toastSlice";
 import { useDispatch } from "react-redux";
-import { Avatar } from "../component/Avatar";
 
 const Blog = () => {
   const dispatch = useDispatch();
@@ -12,14 +11,20 @@ const Blog = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [activePage, setActivePage] = useState(1);
 
+ 
+
   useEffect(() => { 
     fetchBlogs()
-  }, [])
+  }, [activePage])
   
     const fetchBlogs = async () => {
       try {
+        let payload = {
+          page: activePage,
+          search: '',
+        };
         const projectData = await apiFetch(
-          "/api/blog"
+          "/api/blog",payload
         );
         if (projectData?.success) {
           setBlogData(projectData?.results);
@@ -63,11 +68,11 @@ const Blog = () => {
         </div>
       </div>
 
-      <section id="blog-posts" className="blog-posts section">
+      <section id="blog-posts" className="blog-posts section mt-4">
         <div className="container" data-aos="fade-up" data-aos-delay="100">
           <div className="row gy-4">
-            { 
-              blogData?.length > 0 && blogData?.map((el, i) => { 
+            {blogData?.length > 0 &&
+              blogData?.map((el, i) => {
                 return (
                   <div className="col-lg-4">
                     <article>
@@ -96,10 +101,7 @@ const Blog = () => {
                     </article>
                   </div>
                 );
-              })
-            }
-
-            
+              })}
           </div>
           <nav
             className="pagination-wrapper mt-5"

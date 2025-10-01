@@ -3,19 +3,39 @@ import CountUpAnimation from "../component/CountUp";
 import Input from "../component/Input";
 import Dropdown from "../component/Dropdown";
 import Button from "../component/Button";
-import { useEffect, useState } from "react";
-import { apiFetch, capitaliseWords, formatIndianNumber, formatNumber, formatRupees } from "../utils/utils";
-import { useDispatch } from "react-redux";
+import { useEffect, useRef, useState } from "react";
+import {
+  apiFetch,
+  capitaliseWords,
+  formatIndianNumber,
+  modalClose,
+} from "../utils/utils";
+import { useDispatch, useSelector } from "react-redux";
 import { isToastShow } from "../redux/slice/toastSlice";
+import { isLoadingShow } from "../redux/slice/loadingSlice";
+import DateTimePicker from "../component/DateTimePicker";
 
 const Home = () => {
+  const dispatch = useDispatch();
+  const userState = useSelector((state) => state?.user?.userInfo);
   const [searchProject, setSearchProject] = useState("");
   const [citySelect, setCitySelect] = useState("Thane");
   const [propertiesData, setPropertiesData] = useState([]);
-  const dispatch = useDispatch();
+  const [bannerData, setBannerData] = useState([]);
+  const [groupData, setGroupData] = useState([]);
+  const [propertyType, setPropertyType] = useState("");
+  const [selectPropertyId, setSelectPropertyId] = useState("");
+  const [bookingSlot, setBookingSlot] = useState({
+    mode: "",
+    date_time: "",
+    present_by: "",
+  });
+  let bookingMode = useRef("offline");
 
   useEffect(() => {
     fetchProject();
+    fetchBanner();
+    fetchGroup();
   }, [citySelect]);
 
   const fetchProject = async () => {
@@ -37,6 +57,65 @@ const Home = () => {
             isShow: true,
             type: "error",
             message: projectData?.message,
+          })
+        );
+      }
+    } catch (error) {
+      dispatch(
+        isToastShow({
+          isShow: true,
+          type: "error",
+          message: "something went wrong",
+        })
+      );
+    }
+  };
+
+  const fetchBanner = async () => {
+    try {
+      let payload = {
+        city: citySelect.toLowerCase(),
+        page: 1,
+        search: "",
+      };
+      const bannerData = await apiFetch("/api/banner", payload);
+      if (bannerData?.success) {
+        setBannerData(bannerData?.results);
+      } else {
+        dispatch(
+          isToastShow({
+            isShow: true,
+            type: "error",
+            message: bannerData?.message,
+          })
+        );
+      }
+    } catch (error) {
+      dispatch(
+        isToastShow({
+          isShow: true,
+          type: "error",
+          message: "something went wrong",
+        })
+      );
+    }
+  };
+
+  const fetchGroup = async () => {
+    try {
+      let payload = {
+        page: 1,
+        search: "",
+      };
+      const groupData = await apiFetch("/api/group", payload);
+      if (groupData?.success) {
+        setGroupData(groupData?.results);
+      } else {
+        dispatch(
+          isToastShow({
+            isShow: true,
+            type: "error",
+            message: groupData?.message,
           })
         );
       }
@@ -78,6 +157,70 @@ const Home = () => {
     },
   ];
 
+  const citySelectHandler = (el) => {
+    modalClose("citySelectionBackdrop");
+    setCitySelect(el?.name);
+  };
+
+  const onChangeHandler = (data) => {
+    setBookingSlot({
+      mode: bookingMode.current,
+      data_time: data,
+      present_by: bookingMode.current === "online" ? "googlemeet" : "",
+    });
+  };
+
+  const submitRequestForBooking = async () => {
+    console.log("userState", userState);
+    if (userState == "" || userState == undefined || userState?.isLogin === 0) {
+      return dispatch(
+        isToastShow({
+          isShow: true,
+          type: "success",
+          message: "Before slot booking, please login first",
+        })
+      );
+    }
+
+    dispatch(isLoadingShow({ isShow: true }));
+    bookingSlot["projectId"] = selectPropertyId;
+    bookingSlot["userId"] = userState?._id;
+
+    try {
+      const requestData = await apiFetch(
+        "/api/project/submitRequestForBooking",
+        bookingSlot
+      );
+      if (requestData?.success) {
+        dispatch(
+          isToastShow({
+            isShow: true,
+            type: "success",
+            message: requestData?.message,
+          })
+        );
+
+        modalClose("bookingNowBackdrop");
+      } else {
+        dispatch(
+          isToastShow({
+            isShow: true,
+            type: "error",
+            message: requestData?.message,
+          })
+        );
+      }
+    } catch (error) {
+      dispatch(
+        isToastShow({
+          isShow: true,
+          type: "error",
+          message: "something went wrong",
+        })
+      );
+    }
+  };
+
   return (
     <main className="main">
       <section id="hero" className="hero section">
@@ -93,42 +236,68 @@ const Home = () => {
               data-aos-delay="200"
             >
               <img
-                src="/assets/img/banner.webp"
+                src={bannerData?.[0]?.imageInfo?.url}
                 alt="Featured Property"
                 className="img-fluid"
               />
               <div className="position-absolute text-center start-50 translate-middle directly-with-builders">
-                <h4 className="fs-4">Buy Homes Directly with Builders</h4>
-                <div className="cta-buttons mt-4">
-                  <Link to="#" className="btn btn-primary me-3">
-                    Learn More About Us
-                  </Link>
-                  <Link to="#" className="btn btn-outline-primary">
-                    Contact Our Team
-                  </Link>
-                </div>
-              </div>
-              <div className="position-absolute text-center start-50 translate-middle city-search-div">
-                <div class="input-group">
-                  <span
-                    class="input-group-text btn-primary text-white"
-                    id="visible-addon"
-                    data-bs-toggle="modal"
-                    data-bs-target="#citySelectionBackdrop"
-                  >
-                    <i class="bi bi-geo-alt me-1"></i>
-                    {citySelect}
+                <h4>Connect Directly with Builders</h4>
+                <div className="cta-buttons no-broker mt-4">
+                  <span>
+                    <img src="assets/img/no-brokerage.svg" className="mx-1" />
+                    0% Brokerage
                   </span>
-                  <Input
-                    type="text"
-                    id={"search"}
-                    name={"search"}
-                    class="form-control"
-                    placeholder="Search"
-                    required={false}
-                    value={searchProject}
-                    onChange={(e) => setSearchProject(e.target.value)}
-                  />
+                  <span>
+                    <img src="assets/img/bottom-rate.svg" className="mx-1" />
+                    Best Rate Guarantee
+                  </span>
+                </div>
+                <div className="text-center city-search-div">
+                  <div className="d-flex gap-2 justify-content-center">
+                    <span
+                      className={`btn ${
+                        propertyType === "residential"
+                          ? "btn-primary text-white"
+                          : "btn btn-dark"
+                      }`}
+                      data-bs-toggle="modal"
+                      data-bs-target="#citySelectionBackdrop"
+                      onClick={() => setPropertyType("residential")}
+                    >
+                      Residential
+                    </span>
+                    <span
+                      className={`btn ${
+                        propertyType === "commercial"
+                          ? "btn-primary text-white"
+                          : "btn btn-dark"
+                      }`}
+                      data-bs-toggle="modal"
+                      data-bs-target="#citySelectionBackdrop"
+                      onClick={() => setPropertyType("commercial")}
+                    >
+                      Commercial
+                    </span>
+                  </div>
+                  <div className="input-group mt-3">
+                    <div
+                      className="input-group-text btn-primary text-white"
+                      id="visible-addon"
+                    >
+                      {citySelect}
+                      <i class="bi bi-caret-down-fill mx-1 mt-1"></i>
+                    </div>
+                    <Input
+                      type="text"
+                      id={"search"}
+                      name={"search"}
+                      className="form-control"
+                      placeholder="Search"
+                      required={false}
+                      value={searchProject}
+                      onChange={(e) => setSearchProject(e.target.value)}
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -206,12 +375,12 @@ const Home = () => {
               data-aos-delay="200"
             >
               <div className="service-card">
-                <div className="service-icon">
-                  <i className="bi bi-search"></i>
-                </div>
                 <div className="service-info">
                   <h3>
-                    <Link to="service-details">Property Search</Link>
+                    <div className="property-dikhao-services">
+                      <span>Property Dikhao</span>
+                      <div className="service">Home Interior</div>
+                    </div>
                   </h3>
                   <p>
                     Excepteur sint occaecat cupidatat non proident sunt in culpa
@@ -248,12 +417,12 @@ const Home = () => {
 
             <div className="col-lg-6" data-aos="fade-left" data-aos-delay="300">
               <div className="service-card">
-                <div className="service-icon">
-                  <i className="bi bi-calculator"></i>
-                </div>
                 <div className="service-info">
                   <h3>
-                    <Link to="service-details">Property Valuation</Link>
+                    <div className="property-dikhao-services">
+                      <span>Property Dikhao</span>
+                      <div className="service">Home Loan</div>
+                    </div>
                   </h3>
                   <p>
                     Sed ut perspiciatis unde omnis iste natus error sit
@@ -287,6 +456,103 @@ const Home = () => {
                     loading="lazy"
                   />
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="featured-services" className="featured-services section">
+        <div className="container section-title my-4" data-aos="fade-up">
+          <h2>Top New Project {citySelect}</h2>
+        </div>
+
+        <div className="container" data-aos="fade-up" data-aos-delay="100">
+          <div className="row g-4">
+            <div
+              className="col-lg-12"
+              data-aos="fade-right"
+              data-aos-delay="200"
+            >
+              <div
+                className="d-flex flex-wrap justify-content-between gap-2"
+                data-aos="fade-up"
+                data-aos-delay="400"
+              >
+                {propertiesData?.length > 0 ? (
+                  propertiesData?.map((el, i) => {
+                    return (
+                      <div className="cardDiv selected-project-div col-lg-6 col-sm-12 d-flex">
+                        <div className="project-img">
+                          <img
+                            src={el?.projectImg?.[0]?.imageInfo?.url}
+                            className="img-fuild"
+                          />
+                        </div>
+                        <div className="project-info">
+                          <h4>{el?.projectName}</h4>
+                          <div className="d-flex justify-content-between">
+                            <span>
+                              By
+                              <span className="group-name mx-2">
+                                {el?.groupDetails?.groupName}
+                              </span>
+                            </span>
+                            <span className="mx-2">
+                              <i className="bi bi-geo-alt me-1"></i>
+                              {capitaliseWords(el?.city)}
+                            </span>
+                          </div>
+                          <div className="d-flex justify-content-between mt-2">
+                            {el?.configuration?.map((conf, i) => {
+                              return (
+                                <span>
+                                  {conf?.bhk}BHK{" "}
+                                  {el?.configuration?.length > 1 && ","}
+                                </span>
+                              );
+                            })}
+
+                            <span className="mx-2">
+                              <i className="bi bi-textarea me-1"></i>
+                              {el?.configuration?.[0]?.reraArea} sqFt
+                            </span>
+                          </div>
+                          <div className="d-flex justify-content-between mt-2">
+                            <span>
+                              <i className="bi bi-house me-1"></i>
+                              {el?.possesionByDeveloper} Possesion Date
+                            </span>
+                          </div>
+                          <div className="d-flex justify-content-between mt-2">
+                            <span>
+                              <i className="bi bi-currency-rupee"></i>
+                              {formatIndianNumber(
+                                el?.configuration?.[0]?.allInc
+                              )}{" "}
+                              - <i className="bi bi-currency-rupee"></i>
+                              {formatIndianNumber(
+                                el?.configuration?.[
+                                  el?.configuration?.length - 1
+                                ]?.allInc
+                              )}
+                            </span>
+                          </div>
+                          <div
+                            className="book-btn"
+                            data-bs-toggle="modal"
+                            data-bs-target="#bookingNowBackdrop"
+                            onClick={() => setSelectPropertyId(el?._id)}
+                          >
+                            <i class="bi bi-telephone mx-1"></i>Book Now
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <h4>No Property available for {citySelect}</h4>
+                )}
               </div>
             </div>
           </div>
@@ -360,96 +626,6 @@ const Home = () => {
                     </p>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="featured-services" className="featured-services section">
-        <div className="container section-title my-4" data-aos="fade-up">
-          <h2>Top New Project {citySelect}</h2>
-        </div>
-
-        <div className="container" data-aos="fade-up" data-aos-delay="100">
-          <div className="row g-4">
-            <div
-              className="col-lg-12"
-              data-aos="fade-right"
-              data-aos-delay="200"
-            >
-              <div
-                className="d-flex flex-wrap justify-content-between gap-2"
-                data-aos="fade-up"
-                data-aos-delay="400"
-              >
-                {propertiesData?.length > 0 ? (
-                  propertiesData?.map((el, i) => {
-                   
-                    return (
-                      <div className="cardDiv selected-project-div col-lg-6 col-sm-12 d-flex">
-                        <div className="project-img">
-                          <img
-                            src={el?.projectImg?.[0]?.imageInfo?.url}
-                            className="img-fuild"
-                          />
-                        </div>
-                        <div className="project-info">
-                          <h4>{el?.projectName}</h4>
-                          <div className="d-flex justify-content-between">
-                            <span>
-                              By
-                              <span className="group-name mx-2">
-                                {el?.groupDetails?.groupName}
-                              </span>
-                            </span>
-                            <span className="mx-2">
-                              <i class="bi bi-geo-alt me-1"></i>
-                              {capitaliseWords(el?.city)}
-                            </span>
-                          </div>
-                          <div className="d-flex justify-content-between mt-2">
-                            {el?.configuration?.map((conf, i) => {
-                              return (
-                                <span>
-                                  {conf?.bhk}BHK{" "}
-                                  {el?.configuration?.length > 1 && ","}
-                                </span>
-                              );
-                            })}
-
-                            <span className="mx-2">
-                              <i class="bi bi-textarea me-1"></i>
-                              {el?.configuration?.[0]?.reraArea} sqFt
-                            </span>
-                          </div>
-                          <div className="d-flex justify-content-between mt-2">
-                            <span>
-                              <i class="bi bi-house me-1"></i>
-                              {el?.possesionByDeveloper} Possesion Date
-                            </span>
-                          </div>
-                          <div className="d-flex justify-content-between mt-2">
-                            <span>
-                              <i class="bi bi-currency-rupee"></i>
-                              {formatIndianNumber(
-                                el?.configuration?.[0]?.allInc
-                              )}{" "}
-                              - <i class="bi bi-currency-rupee"></i>
-                              {formatIndianNumber(
-                                el?.configuration?.[
-                                  el?.configuration?.length - 1
-                                ]?.allInc
-                              )}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <h4>No Property available for {citySelect}</h4>
-                )}
               </div>
             </div>
           </div>
@@ -682,8 +858,49 @@ const Home = () => {
         </div>
       </section>
 
-      {/* city selection modal */}
+      <section id="featured-services" className="featured-services section">
+        <div className="container section-title my-4" data-aos="fade-up">
+          <h2>We Worked With</h2>
+        </div>
 
+        <div className="container mb-4" data-aos="fade-up" data-aos-delay="100">
+          <div className="row g-4">
+            <div
+              className="col-lg-12"
+              data-aos="fade-right"
+              data-aos-delay="200"
+            >
+              <div
+                className="d-flex flex-wrap gap-4"
+                data-aos="fade-up"
+                data-aos-delay="400"
+              >
+                {groupData?.length > 0 ? (
+                  groupData?.map((el, i) => {
+                    return (
+                      <div className="cardDiv selected-builder-div col-3">
+                        <div className="project-img">
+                          <img src={el?.imageInfo?.url} className="img-fuild" />
+                        </div>
+                        <div className="experiance">
+                          <span>Experiance : 100</span>&nbsp;&nbsp; |
+                          &nbsp;&nbsp;
+                          <span>Total Projects : 10</span>
+                        </div>
+                        <span className="btn btn-primary mt-4">View All Projects <i className="bi bi-arrow-up-right"></i></span>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <h4>No Property available for {citySelect}</h4>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* city selection modal */}
       <div
         className="modal fade"
         id="citySelectionBackdrop"
@@ -714,7 +931,7 @@ const Home = () => {
                       className={`col-3 d-flex flex-column text-center select-city-div ${
                         citySelect === el?.name ? "selected" : ""
                       }`}
-                      onClick={() => setCitySelect(el?.name)}
+                      onClick={() => citySelectHandler(el)}
                     >
                       <img
                         src={`assets/img/${el?.image}`}
@@ -724,6 +941,126 @@ const Home = () => {
                     </div>
                   );
                 })}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* schedule modal */}
+      <div
+        className="modal fade"
+        id="bookingNowBackdrop"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabIndex="-1"
+        aria-labelledby="bookingNowBackdropLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="bookingNowBackdropLabel">
+                Booking Time!!
+              </h1>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <div>
+                <ul
+                  className="nav nav-tabs"
+                  id="configurationTab"
+                  role="tablist"
+                >
+                  <li className="nav-item" role="presentation">
+                    <button
+                      className="nav-link active"
+                      id="slotBooking-tab"
+                      data-bs-toggle="tab"
+                      data-bs-target="#slotBooking"
+                      type="button"
+                      role="tab"
+                      aria-controls="slotBooking"
+                      aria-selected="true"
+                      onClick={() => (bookingMode.current = "offline")}
+                    >
+                      <h6>Book Site Visit</h6>
+                    </button>
+                  </li>
+
+                  <li className="nav-item" role="presentation">
+                    <button
+                      className="nav-link"
+                      id="meetBooking-tab"
+                      data-bs-toggle="tab"
+                      data-bs-target="#meetBooking"
+                      type="button"
+                      role="tab"
+                      aria-controls="meetBooking"
+                      aria-selected="true"
+                      onClick={() => (bookingMode.current = "online")}
+                    >
+                      <h6>Book Online Presantation</h6>
+                    </button>
+                  </li>
+                </ul>
+
+                <div className="tab-content" id="bookingTabContent">
+                  <div
+                    className="tab-pane fade show active"
+                    id="slotBooking"
+                    role="tabpanel"
+                    aria-labelledby="slotBooking-tab"
+                  >
+                    <DateTimePicker
+                      label="Select your pick up date"
+                      onChange={(data) => onChangeHandler(data)}
+                    />
+                  </div>
+                </div>
+
+                <div className="tab-content" id="bookingTabContent">
+                  <div
+                    className="tab-pane fade show"
+                    id="meetBooking"
+                    role="tabpanel"
+                    aria-labelledby="meetBooking-tab"
+                  >
+                    <div className="d-flex">
+                      <DateTimePicker
+                        label="Book Online Slot"
+                        onChange={(data) => onChangeHandler(data)}
+                      />
+                      <div className="form-check align-self-center">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          name="googleMeet"
+                          checked="true"
+                          id="googleMeet1"
+                        />
+                        <label className="form-check-label" for="googleMeet1">
+                          <i className="bi bi-camera-video-fill me-2"></i>
+                          Google Meet
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <div className="w-100" onClick={() => submitRequestForBooking()}>
+                <Button
+                  type="submit"
+                  icon={<i className="bi bi-check-lg fs-4"></i>}
+                  label="Submit Request"
+                />
               </div>
             </div>
           </div>
