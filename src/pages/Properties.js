@@ -277,7 +277,7 @@ const Properties = () => {
                         >
                           <div className="property-item">
                             <Link
-                              to={`property-details/${property?._id}`}
+                              to={`property-details/${property?.projectSlug}`}
                               className="property-link"
                             >
                               <div className="property-image-wrapper">

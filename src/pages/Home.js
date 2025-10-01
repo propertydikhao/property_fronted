@@ -14,34 +14,47 @@ import { useDispatch, useSelector } from "react-redux";
 import { isToastShow } from "../redux/slice/toastSlice";
 import { isLoadingShow } from "../redux/slice/loadingSlice";
 import DateTimePicker from "../component/DateTimePicker";
+import useDebounce from "../utils/debounce";
 
 const Home = () => {
   const dispatch = useDispatch();
   const userState = useSelector((state) => state?.user?.userInfo);
-  const [searchProject, setSearchProject] = useState("");
-  const [citySelect, setCitySelect] = useState("Thane");
+  const [city, setCity] = useState("Thane");
   const [propertiesData, setPropertiesData] = useState([]);
   const [bannerData, setBannerData] = useState([]);
   const [groupData, setGroupData] = useState([]);
   const [propertyType, setPropertyType] = useState("");
   const [selectPropertyId, setSelectPropertyId] = useState("");
+  const [locality_builder_data, setLocality_builder_data] = useState([]);
+  const [query, setQuery] = useState("");
   const [bookingSlot, setBookingSlot] = useState({
     mode: "",
     date_time: "",
     present_by: "",
   });
   let bookingMode = useRef("offline");
+  const debouncedQuery = useDebounce(query, 250);
+
+  useEffect(() => {
+    if (debouncedQuery) {
+      getSuggestionByCity(query);
+    }
+  }, [debouncedQuery]);
 
   useEffect(() => {
     fetchProject();
+  }, [city]);
+
+  useEffect(() => { 
     fetchBanner();
     fetchGroup();
-  }, [citySelect]);
+  },[])
 
   const fetchProject = async () => {
     try {
       let payload = {
-        city: citySelect.toLowerCase(),
+        city: city?.toLowerCase(),
+        propertyType,
         page: 1,
         search: "",
       };
@@ -74,7 +87,7 @@ const Home = () => {
   const fetchBanner = async () => {
     try {
       let payload = {
-        city: citySelect.toLowerCase(),
+        city: city.toLowerCase(),
         page: 1,
         search: "",
       };
@@ -159,7 +172,7 @@ const Home = () => {
 
   const citySelectHandler = (el) => {
     modalClose("citySelectionBackdrop");
-    setCitySelect(el?.name);
+    setCity(el?.name);
   };
 
   const onChangeHandler = (data) => {
@@ -171,7 +184,6 @@ const Home = () => {
   };
 
   const submitRequestForBooking = async () => {
-    console.log("userState", userState);
     if (userState == "" || userState == undefined || userState?.isLogin === 0) {
       return dispatch(
         isToastShow({
@@ -221,6 +233,41 @@ const Home = () => {
     }
   };
 
+  const getSuggestionByCity = async (searchBy) => {
+    try {
+      let payload = {
+        city : city?.toLowerCase(),
+        propertyType,
+        searchBy,
+      };
+      const projectData = await apiFetch(
+        "/api/project/getSuggestionByCity",
+        payload
+      );
+      if (projectData?.success) {
+        setLocality_builder_data(projectData?.data);
+      } else {
+        setLocality_builder_data([]);
+        dispatch(
+          isToastShow({
+            isShow: true,
+            type: "error",
+            message: projectData?.message,
+          })
+        );
+      }
+    } catch (error) {
+      setLocality_builder_data([]);
+      dispatch(
+        isToastShow({
+          isShow: true,
+          type: "error",
+          message: "something went wrong",
+        })
+      );
+    }
+  };
+
   return (
     <main className="main">
       <section id="hero" className="hero section">
@@ -243,14 +290,14 @@ const Home = () => {
               <div className="position-absolute text-center start-50 translate-middle directly-with-builders">
                 <h4>Connect Directly with Builders</h4>
                 <div className="cta-buttons no-broker mt-4">
-                  <span>
+                  <div>
                     <img src="assets/img/no-brokerage.svg" className="mx-1" />
-                    0% Brokerage
-                  </span>
-                  <span>
+                    <span>0% Brokerage</span>
+                  </div>
+                  <div>
                     <img src="assets/img/bottom-rate.svg" className="mx-1" />
-                    Best Rate Guarantee
-                  </span>
+                    <span>Best Rate Guarantee</span>
+                  </div>
                 </div>
                 <div className="text-center city-search-div">
                   <div className="d-flex gap-2 justify-content-center">
@@ -279,24 +326,53 @@ const Home = () => {
                       Commercial
                     </span>
                   </div>
-                  <div className="input-group mt-3">
+                  <div className="input-group-div mt-3">
                     <div
-                      className="input-group-text btn-primary text-white"
+                      className="input-group-text btn-primary justify-content-center text-white col-sm-4 col-md-2"
                       id="visible-addon"
                     >
-                      {citySelect}
-                      <i class="bi bi-caret-down-fill mx-1 mt-1"></i>
+                      <span>
+                        {city}
+                        <i class="bi bi-caret-down-fill mx-1 mt-1"></i>
+                      </span>
                     </div>
-                    <Input
-                      type="text"
-                      id={"search"}
-                      name={"search"}
-                      className="form-control"
-                      placeholder="Search"
-                      required={false}
-                      value={searchProject}
-                      onChange={(e) => setSearchProject(e.target.value)}
-                    />
+                    <div className=" col-sm-8 col-md-10">
+                      <Input
+                        type="text"
+                        id={"search"}
+                        name={"search"}
+                        className="form-control"
+                        placeholder="Search"
+                        required={false}
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                      />
+                      {locality_builder_data?.length > 0 && (
+                        <div
+                          className={`suggestionDiv ${
+                            query ? "visible home-visible" : ""
+                          }`}
+                        >
+                          <ul>
+                            {locality_builder_data?.map((item, i) => {
+                              return (
+                                <Link
+                                  to={`/properties/property-details/${item?.projectSlug}`}
+                                >
+                                  <li key={i}>
+                                    <div>
+                                      {" "}
+                                      <i className="bi bi-pin-map me-2"></i>
+                                      {item?.projectName} {}
+                                    </div>
+                                  </li>
+                                </Link>
+                              );
+                            })}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -464,7 +540,7 @@ const Home = () => {
 
       <section id="featured-services" className="featured-services section">
         <div className="container section-title my-4" data-aos="fade-up">
-          <h2>Top New Project {citySelect}</h2>
+          <h2>Top New Project {city}</h2>
         </div>
 
         <div className="container" data-aos="fade-up" data-aos-delay="100">
@@ -482,76 +558,80 @@ const Home = () => {
                 {propertiesData?.length > 0 ? (
                   propertiesData?.map((el, i) => {
                     return (
-                      <div className="cardDiv selected-project-div col-lg-6 col-sm-12 d-flex">
-                        <div className="project-img">
-                          <img
-                            src={el?.projectImg?.[0]?.imageInfo?.url}
-                            className="img-fuild"
-                          />
-                        </div>
-                        <div className="project-info">
-                          <h4>{el?.projectName}</h4>
-                          <div className="d-flex justify-content-between">
-                            <span>
-                              By
-                              <span className="group-name mx-2">
-                                {el?.groupDetails?.groupName}
-                              </span>
-                            </span>
-                            <span className="mx-2">
-                              <i className="bi bi-geo-alt me-1"></i>
-                              {capitaliseWords(el?.city)}
-                            </span>
+                      <Link
+                        to={`/properties/property-details/${el?.projectSlug}`}
+                      >
+                        <div className="cardDiv selected-project-div col-lg-6 col-sm-12 d-flex">
+                          <div className="project-img">
+                            <img
+                              src={el?.projectImg?.[0]?.imageInfo?.url}
+                              className="img-fuild"
+                            />
                           </div>
-                          <div className="d-flex justify-content-between mt-2">
-                            {el?.configuration?.map((conf, i) => {
-                              return (
-                                <span>
-                                  {conf?.bhk}BHK{" "}
-                                  {el?.configuration?.length > 1 && ","}
+                          <div className="project-info">
+                            <h4>{el?.projectName}</h4>
+                            <div className="d-flex justify-content-between">
+                              <span>
+                                By
+                                <span className="group-name mx-2">
+                                  {el?.groupDetails?.groupName}
                                 </span>
-                              );
-                            })}
+                              </span>
+                              <span className="mx-2">
+                                <i className="bi bi-geo-alt me-1"></i>
+                                {capitaliseWords(el?.city)}
+                              </span>
+                            </div>
+                            <div className="d-flex justify-content-between mt-2">
+                              {el?.configuration?.map((conf, i) => {
+                                return (
+                                  <span>
+                                    {conf?.bhk}BHK{" "}
+                                    {el?.configuration?.length > 1 && ","}
+                                  </span>
+                                );
+                              })}
 
-                            <span className="mx-2">
-                              <i className="bi bi-textarea me-1"></i>
-                              {el?.configuration?.[0]?.reraArea} sqFt
-                            </span>
-                          </div>
-                          <div className="d-flex justify-content-between mt-2">
-                            <span>
-                              <i className="bi bi-house me-1"></i>
-                              {el?.possesionByDeveloper} Possesion Date
-                            </span>
-                          </div>
-                          <div className="d-flex justify-content-between mt-2">
-                            <span>
-                              <i className="bi bi-currency-rupee"></i>
-                              {formatIndianNumber(
-                                el?.configuration?.[0]?.allInc
-                              )}{" "}
-                              - <i className="bi bi-currency-rupee"></i>
-                              {formatIndianNumber(
-                                el?.configuration?.[
-                                  el?.configuration?.length - 1
-                                ]?.allInc
-                              )}
-                            </span>
-                          </div>
-                          <div
-                            className="book-btn"
-                            data-bs-toggle="modal"
-                            data-bs-target="#bookingNowBackdrop"
-                            onClick={() => setSelectPropertyId(el?._id)}
-                          >
-                            <i class="bi bi-telephone mx-1"></i>Book Now
+                              <span className="mx-2">
+                                <i className="bi bi-textarea me-1"></i>
+                                {el?.configuration?.[0]?.reraArea} sqFt
+                              </span>
+                            </div>
+                            <div className="d-flex justify-content-between mt-2">
+                              <span>
+                                <i className="bi bi-house me-1"></i>
+                                {el?.possesionByDeveloper} Possesion Date
+                              </span>
+                            </div>
+                            <div className="d-flex justify-content-between mt-2">
+                              <span>
+                                <i className="bi bi-currency-rupee"></i>
+                                {formatIndianNumber(
+                                  el?.configuration?.[0]?.allInc
+                                )}{" "}
+                                - <i className="bi bi-currency-rupee"></i>
+                                {formatIndianNumber(
+                                  el?.configuration?.[
+                                    el?.configuration?.length - 1
+                                  ]?.allInc
+                                )}
+                              </span>
+                            </div>
+                            <div
+                              className="book-btn"
+                              data-bs-toggle="modal"
+                              data-bs-target="#bookingNowBackdrop"
+                              onClick={() => setSelectPropertyId(el?._id)}
+                            >
+                              <i class="bi bi-telephone mx-1"></i>Book Now
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </Link>
                     );
                   })
                 ) : (
-                  <h4>No Property available for {citySelect}</h4>
+                  <h4>No Property available for {city}</h4>
                 )}
               </div>
             </div>
@@ -887,12 +967,15 @@ const Home = () => {
                           &nbsp;&nbsp;
                           <span>Total Projects : 10</span>
                         </div>
-                        <span className="btn btn-primary mt-4">View All Projects <i className="bi bi-arrow-up-right"></i></span>
+                        <span className="btn btn-primary mt-4">
+                          View All Projects{" "}
+                          <i className="bi bi-arrow-up-right"></i>
+                        </span>
                       </div>
                     );
                   })
                 ) : (
-                  <h4>No Property available for {citySelect}</h4>
+                  <h4>No Property available for {city}</h4>
                 )}
               </div>
             </div>
@@ -929,7 +1012,7 @@ const Home = () => {
                   return (
                     <div
                       className={`col-3 d-flex flex-column text-center select-city-div ${
-                        citySelect === el?.name ? "selected" : ""
+                        city === el?.name ? "selected" : ""
                       }`}
                       onClick={() => citySelectHandler(el)}
                     >

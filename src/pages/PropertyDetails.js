@@ -35,19 +35,22 @@ const PropertyDetails = () => {
   });
   let bookingMode = useRef("offline");
 
-  const { id } = useParams();
+  const { slug } = useParams();
   useEffect(() => {
-    fetchProperty(id);
-  }, [id]);
+    fetchProperty(slug);
+  }, [slug]);
 
   useEffect(() => {}, [previewUnitImg]);
 
-  const fetchProperty = async (id) => {
+  const fetchProperty = async (slug) => {
     try {
       let payload = {
-        projectId: id,
+        projectSlug: slug,
       };
-      const projectData = await apiFetch("/api/project/getProjectId", payload);
+      const projectData = await apiFetch(
+        "/api/project/getProjectBySlug",
+        payload
+      );
       if (projectData?.success) {
         setProjectDetails(projectData?.data?.[0]);
         setSimilarProject(projectData?.similarProject);

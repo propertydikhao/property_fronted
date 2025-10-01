@@ -128,7 +128,7 @@ h6 {
   --heading-color: #ffffff;
   color: var(--default-color);
   background-color: var(--background-color);
-  padding: 15px 0;
+  padding: 10px;
   transition: all 0.5s;
   z-index: 997;
 }
@@ -149,7 +149,7 @@ h6 {
 }
 
 .header .logo h1 {
-  font-size: 30px;
+  font-size: 20px;
   margin: 0;
   font-weight: 700;
   color: var(--heading-color);
@@ -343,23 +343,24 @@ h6 {
   margin-top: 25px;
 }
 
-.city-search-div > .input-group > span {
-  padding: 0 30px;
+.city-search-div > .input-group-div > div {
+  /* padding: 0 30px; */
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
   cursor: pointer;
 }
 
-.city-search-div > .input-group > .search-field > input {
+.city-search-div > .input-group-div {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.city-search-div > .input-group-div > div > .search-field > input {
   background: white;
   padding: 15px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
-}
-
-.city-search-div > .input-group > .search-field {
-  width: 80%;
 }
 
 .select-city-div {
@@ -429,7 +430,7 @@ h6 {
   justify-content: space-evenly;
 }
 
-.no-broker > span {
+.no-broker > div {
   padding: 11px 25px;
   border: 1px solid var(--accent-color);
   border-radius: 44px;
@@ -438,8 +439,9 @@ h6 {
   font-size: 20px;
 }
 
-.no-broker > span > img {
+.no-broker > div > img {
   width: 20px;
+  vertical-align: text-top;
 }
 
 .property-dikhao-services {
@@ -452,7 +454,6 @@ h6 {
   font-size: 15px;
   color: var(--accent-color);
 }
-
 
 .selected-builder-div > .project-img {
   height: 140px;
@@ -611,21 +612,17 @@ h6 {
     font-size: 22px;
   }
 
-  .no-broker > span {
+  .no-broker > div {
     padding: 0;
     border: none;
     color: var(--accent-color);
     font-weight: bolder;
-    font-size: 10px;
+    font-size: 16px;
   }
 
   .city-search-div {
     padding: 10px;
     width: 100%;
-  }
-
-  .city-search-div > .input-group {
-    flex-wrap: nowrap;
   }
 }
 
@@ -10549,6 +10546,13 @@ p {
 .visible {
   opacity: 1;
   visibility: visible;
+}
+
+.home-visible{
+  width: 83%;
+  text-align: justify;
+  max-height: 200px;
+  overflow: auto;
 }
 
 .planImg {
