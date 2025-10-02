@@ -357,7 +357,7 @@ const Home = () => {
                             {locality_builder_data?.map((item, i) => {
                               return (
                                 <Link
-                                  to={`/properties/property-details/${item?.projectSlug}`}
+                                  to={`/properties/property-details/${item?._id}`}
                                 >
                                   <li key={i}>
                                     <div>
@@ -559,7 +559,7 @@ const Home = () => {
                   propertiesData?.map((el, i) => {
                     return (
                       <Link
-                        to={`/properties/property-details/${el?.projectSlug}`}
+                        to={`/properties/property-details/${el?._id}`}
                       >
                         <div className="cardDiv selected-project-div col-lg-6 col-sm-12 d-flex">
                           <div className="project-img">
