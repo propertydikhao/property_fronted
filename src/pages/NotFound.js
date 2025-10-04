@@ -46,26 +46,6 @@ const NotFound = () => {
               changed, or is temporarily unavailable.
             </p>
 
-            <div
-              className="search-box mb-4"
-              data-aos="fade-up"
-              data-aos-delay="600"
-            >
-              <form action="#" className="search-form">
-                <div className="input-group">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Search for pages..."
-                    aria-label="Search"
-                  />
-                  <button className="btn search-btn" type="submit">
-                    <i className="bi bi-search"></i>
-                  </button>
-                </div>
-              </form>
-            </div>
-
             <div className="error-action" data-aos="fade-up" data-aos-delay="700">
               <Link to="/" className="btn btn-primary">
                 Back to Home

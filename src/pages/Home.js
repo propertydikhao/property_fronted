@@ -9,17 +9,23 @@ import {
   capitaliseWords,
   formatIndianNumber,
   modalClose,
+  slugGenerate,
 } from "../utils/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { isToastShow } from "../redux/slice/toastSlice";
 import { isLoadingShow } from "../redux/slice/loadingSlice";
 import DateTimePicker from "../component/DateTimePicker";
 import useDebounce from "../utils/debounce";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
 
 const Home = () => {
   const dispatch = useDispatch();
   const userState = useSelector((state) => state?.user?.userInfo);
-  const [city, setCity] = useState("Thane");
+  const [city, setCity] = useState("mumbai");
   const [propertiesData, setPropertiesData] = useState([]);
   const [bannerData, setBannerData] = useState([]);
   const [groupData, setGroupData] = useState([]);
@@ -45,15 +51,15 @@ const Home = () => {
     fetchProject();
   }, [city]);
 
-  useEffect(() => { 
+  useEffect(() => {
     fetchBanner();
     fetchGroup();
-  },[])
+  }, []);
 
   const fetchProject = async () => {
     try {
       let payload = {
-        city: city?.toLowerCase(),
+        city,
         propertyType,
         page: 1,
         search: "",
@@ -64,14 +70,6 @@ const Home = () => {
       );
       if (projectData?.success) {
         setPropertiesData(projectData?.results);
-      } else {
-        dispatch(
-          isToastShow({
-            isShow: true,
-            type: "error",
-            message: projectData?.message,
-          })
-        );
       }
     } catch (error) {
       dispatch(
@@ -87,7 +85,7 @@ const Home = () => {
   const fetchBanner = async () => {
     try {
       let payload = {
-        city: city.toLowerCase(),
+        city,
         page: 1,
         search: "",
       };
@@ -145,28 +143,20 @@ const Home = () => {
 
   const cityArr = [
     {
-      image: "ahmedabad.webp",
-      name: "Ahmedabad",
+      image: "mumbai.png",
+      name: "mumbai",
     },
     {
-      image: "bangalore.webp",
-      name: "Bangalore",
+      image: "navi-mumbai.png",
+      name: "navi mumbai",
     },
     {
-      image: "hyderabad.webp",
-      name: "Hyderabad",
+      image: "palghar.png",
+      name: "palghar",
     },
     {
-      image: "mumbai.webp",
-      name: "Mumbai",
-    },
-    {
-      image: "pune.webp",
-      name: "Pune",
-    },
-    {
-      image: "thane.webp",
-      name: "Thane",
+      image: "thane.png",
+      name: "thane",
     },
   ];
 
@@ -236,7 +226,7 @@ const Home = () => {
   const getSuggestionByCity = async (searchBy) => {
     try {
       let payload = {
-        city : city?.toLowerCase(),
+        city,
         propertyType,
         searchBy,
       };
@@ -248,13 +238,13 @@ const Home = () => {
         setLocality_builder_data(projectData?.data);
       } else {
         setLocality_builder_data([]);
-        dispatch(
-          isToastShow({
-            isShow: true,
-            type: "error",
-            message: projectData?.message,
-          })
-        );
+        // dispatch(
+        //   isToastShow({
+        //     isShow: true,
+        //     type: "error",
+        //     message: projectData?.message,
+        //   })
+        // );
       }
     } catch (error) {
       setLocality_builder_data([]);
@@ -332,8 +322,8 @@ const Home = () => {
                       id="visible-addon"
                     >
                       <span>
-                        {city}
-                        <i class="bi bi-caret-down-fill mx-1 mt-1"></i>
+                        <i class="bi bi-geo-alt mx-1 mt-1"></i>
+                        {capitaliseWords(city)}
                       </span>
                     </div>
                     <div className=" col-sm-8 col-md-10">
@@ -355,19 +345,62 @@ const Home = () => {
                         >
                           <ul>
                             {locality_builder_data?.map((item, i) => {
-                              return (
-                                <Link
-                                  to={`/properties/property-details/${item?._id}`}
-                                >
-                                  <li key={i}>
-                                    <div>
-                                      {" "}
-                                      <i className="bi bi-pin-map me-2"></i>
-                                      {item?.projectName} {}
-                                    </div>
-                                  </li>
-                                </Link>
-                              );
+                              if (
+                                item?.matchedField?.includes(
+                                  "groupDetails.groupName"
+                                )
+                              ) {
+                                return (
+                                  <Link
+                                    key={i}
+                                    to={`/builders/${city}/${slugGenerate(
+                                      item?.groupDetails?.groupName
+                                    )}`}
+                                  >
+                                    <li className="d-flex justify-content-between">
+                                      <div>
+                                        <i className="bi bi-geo-alt me-2"></i>
+                                        {item?.groupDetails?.groupName}
+                                      </div>
+                                    <div className="fw-light">Builders</div>
+                                    </li>
+                                  </Link>
+                                );
+                              }
+                              if (item?.matchedField?.includes("locality")) {
+                                return (
+                                  <Link
+                                    key={i}
+                                    to={`/properties/${city}/${slugGenerate(
+                                      item?.locality
+                                    )}`}
+                                  >
+                                    <li className="d-flex justify-content-between">
+                                      <div>
+                                        <i className="bi bi-geo-alt me-2"></i>
+                                        {item?.locality}
+                                      </div>
+                                      <div className="fw-light">Locality</div>
+                                    </li>
+                                  </Link>
+                                );
+                              }
+                              if (item?.matchedField?.includes("projectName")) {
+                                return (
+                                  <Link
+                                    key={i}
+                                    to={`/properties/property-details/${item?.projectSlug}`}
+                                  >
+                                    <li className="d-flex justify-content-between">
+                                      <div>
+                                        <i className="bi bi-geo-alt me-2"></i>
+                                        {item?.projectName}
+                                      </div>
+                                      <div className="fw-light">Project</div>
+                                    </li>
+                                  </Link>
+                                );
+                              }
                             })}
                           </ul>
                         </div>
@@ -544,97 +577,91 @@ const Home = () => {
         </div>
 
         <div className="container" data-aos="fade-up" data-aos-delay="100">
-          <div className="row g-4">
-            <div
-              className="col-lg-12"
-              data-aos="fade-right"
-              data-aos-delay="200"
-            >
-              <div
-                className="d-flex flex-wrap justify-content-between gap-2"
-                data-aos="fade-up"
-                data-aos-delay="400"
-              >
-                {propertiesData?.length > 0 ? (
-                  propertiesData?.map((el, i) => {
-                    return (
-                      <Link
-                        to={`/properties/property-details/${el?._id}`}
-                      >
-                        <div className="cardDiv selected-project-div col-lg-6 col-sm-12 d-flex">
-                          <div className="project-img">
-                            <img
-                              src={el?.projectImg?.[0]?.imageInfo?.url}
-                              className="img-fuild"
-                            />
-                          </div>
-                          <div className="project-info">
-                            <h4>{el?.projectName}</h4>
-                            <div className="d-flex justify-content-between">
-                              <span>
-                                By
-                                <span className="group-name mx-2">
-                                  {el?.groupDetails?.groupName}
-                                </span>
-                              </span>
-                              <span className="mx-2">
-                                <i className="bi bi-geo-alt me-1"></i>
-                                {capitaliseWords(el?.city)}
-                              </span>
-                            </div>
-                            <div className="d-flex justify-content-between mt-2">
-                              {el?.configuration?.map((conf, i) => {
-                                return (
-                                  <span>
-                                    {conf?.bhk}BHK{" "}
-                                    {el?.configuration?.length > 1 && ","}
-                                  </span>
-                                );
-                              })}
-
-                              <span className="mx-2">
-                                <i className="bi bi-textarea me-1"></i>
-                                {el?.configuration?.[0]?.reraArea} sqFt
-                              </span>
-                            </div>
-                            <div className="d-flex justify-content-between mt-2">
-                              <span>
-                                <i className="bi bi-house me-1"></i>
-                                {el?.possesionByDeveloper} Possesion Date
-                              </span>
-                            </div>
-                            <div className="d-flex justify-content-between mt-2">
-                              <span>
-                                <i className="bi bi-currency-rupee"></i>
-                                {formatIndianNumber(
-                                  el?.configuration?.[0]?.allInc
-                                )}{" "}
-                                - <i className="bi bi-currency-rupee"></i>
-                                {formatIndianNumber(
-                                  el?.configuration?.[
-                                    el?.configuration?.length - 1
-                                  ]?.allInc
-                                )}
-                              </span>
-                            </div>
-                            <div
-                              className="book-btn"
-                              data-bs-toggle="modal"
-                              data-bs-target="#bookingNowBackdrop"
-                              onClick={() => setSelectPropertyId(el?._id)}
-                            >
-                              <i class="bi bi-telephone mx-1"></i>Book Now
-                            </div>
-                          </div>
+          <div
+            className="d-flex flex-wrap justify-content-between gap-2"
+            data-aos="fade-up"
+            data-aos-delay="400"
+          >
+            {propertiesData?.length > 0 ? (
+              propertiesData?.map((el, i) => {
+                return (
+                  <div className="cardDiv selected-project-div col-lg-6 col-sm-12 d-flex flex-wrap">
+                    <div className="col-lg-4 col-sm-12">
+                      <div className="project-left-img">
+                        <img
+                          src={el?.projectImg?.[0]?.imageInfo?.url}
+                          className="img-fuild"
+                        />
+                      </div>
+                    </div>
+                    <div className="col-lg-8 col-sm-12">
+                      <div className="project-info">
+                        <Link
+                          to={`/properties/property-details/${el?.projectSlug}`}
+                        >
+                          <h4>{el?.projectName}</h4>
+                        </Link>
+                        <div className="d-flex justify-content-between">
+                          <span>
+                            By
+                            <span className="group-name mx-2">
+                              {el?.groupDetails?.groupName}
+                            </span>
+                          </span>
+                          <span className="mx-2">
+                            <i className="bi bi-geo-alt me-1"></i>
+                            {capitaliseWords(el?.city)}
+                          </span>
                         </div>
-                      </Link>
-                    );
-                  })
-                ) : (
-                  <h4>No Property available for {city}</h4>
-                )}
-              </div>
-            </div>
+                        <div className="d-flex flex-wrap justify-content-between gap-2 mt-2">
+                          <div>
+                            {el?.configuration?.map((conf, i) => {
+                              return (
+                                <span className="me-1">{conf?.bhk}BHK,</span>
+                              );
+                            })}
+                          </div>
+
+                          <span>
+                            <i className="bi bi-textarea me-1"></i>
+                            {el?.configuration?.[0]?.reraArea} sqFt
+                          </span>
+                        </div>
+                        <div className="d-flex justify-content-between mt-2">
+                          <span>
+                            <i className="bi bi-house me-1"></i>
+                            {el?.possesionByDeveloper} Possesion Date
+                          </span>
+                        </div>
+                        <div className="d-flex justify-content-between mt-2">
+                          <span>
+                            <i className="bi bi-currency-rupee"></i>
+                            {formatIndianNumber(
+                              el?.configuration?.[0]?.allInc
+                            )}{" "}
+                            - <i className="bi bi-currency-rupee"></i>
+                            {formatIndianNumber(
+                              el?.configuration?.[el?.configuration?.length - 1]
+                                ?.allInc
+                            )}
+                          </span>
+                        </div>
+                        <div
+                          className="book-btn"
+                          data-bs-toggle="modal"
+                          data-bs-target="#bookingNowBackdrop"
+                          onClick={() => setSelectPropertyId(el?._id)}
+                        >
+                          <i class="bi bi-telephone mx-1"></i>Book Now
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <h4>No Property available for {city}</h4>
+            )}
           </div>
         </div>
       </section>
@@ -713,14 +740,6 @@ const Home = () => {
       </section>
 
       <section id="why-us" className="why-us section">
-        <div className="container section-title" data-aos="fade-up">
-          <h2>Why Us</h2>
-          <p>
-            Necessitatibus eius consequatur ex aliquid fuga eum quidem sint
-            consectetur velit
-          </p>
-        </div>
-
         <div className="container" data-aos="fade-up" data-aos-delay="100">
           <div className="row gy-4">
             <div
@@ -729,13 +748,11 @@ const Home = () => {
               data-aos-delay="200"
             >
               <div className="content">
-                <h3>Why Choose Premier Real Estate Partners?</h3>
+                <h3>Why Choose Property Dikhao?</h3>
                 <p>
-                  With over two decades of experience in the real estate market,
-                  we've built our reputation on trust, expertise, and
-                  exceptional results. Our dedicated team of local experts
-                  understands the nuances of every neighborhood and market
-                  trend.
+                  We Advice: Our experts are highly informed about the real
+                  estate market and can advise you to make informed decisions
+                  whether it is in purchasing, selling or investing.
                 </p>
 
                 <div className="features-list">
@@ -744,10 +761,11 @@ const Home = () => {
                       <i className="bi bi-check-circle-fill"></i>
                     </div>
                     <div>
-                      <h5>Local Market Expertise</h5>
+                      <h5>Broad Property Portfolio</h5>
                       <p>
-                        Deep knowledge of neighborhoods, pricing trends, and
-                        market conditions in your area.
+                        Residential to commercial, ready-to-moveto
+                        under-construction, we provide chosen portfolio of
+                        properties that suit all requirements and budgets.
                       </p>
                     </div>
                   </div>
@@ -757,10 +775,10 @@ const Home = () => {
                       <i className="bi bi-shield-check"></i>
                     </div>
                     <div>
-                      <h5>Verified Listings Only</h5>
+                      <h5>Open Process:</h5>
                       <p>
-                        Every property is thoroughly vetted and verified before
-                        listing to ensure accuracy and quality.
+                        We tell it like it is and we are open with deals. No
+                        small print, no surprises-- hassle-free transactions.
                       </p>
                     </div>
                   </div>
@@ -770,10 +788,11 @@ const Home = () => {
                       <i className="bi bi-headset"></i>
                     </div>
                     <div>
-                      <h5>24/7 Client Support</h5>
+                      <h5>One to One Service:</h5>
                       <p>
-                        Our dedicated support team is available around the clock
-                        to assist with your real estate needs.
+                        Every customer is unique. We listen to your needs and
+                        offer certain choices based on your life needs and
+                        investment requirements.
                       </p>
                     </div>
                   </div>
@@ -783,20 +802,21 @@ const Home = () => {
                       <i className="bi bi-graph-up-arrow"></i>
                     </div>
                     <div>
-                      <h5>Proven Track Record</h5>
+                      <h5>Reliable Partnerships:</h5>
                       <p>
-                        Consistently delivering results with over 2,500
-                        successful transactions and 98% client satisfaction.
+                        Our property owners and business partners are trusted
+                        and authorized, and this ensures that our deals are
+                        safe, legal and trustworthy.
                       </p>
                     </div>
                   </div>
                 </div>
 
                 <div className="cta-buttons mt-4">
-                  <Link to="#" className="btn btn-primary me-3">
+                  <Link to="/contact" className="btn btn-primary me-3">
                     Learn More About Us
                   </Link>
-                  <Link to="#" className="btn btn-outline-primary">
+                  <Link to="/contact" className="btn btn-outline-primary">
                     Contact Our Team
                   </Link>
                 </div>
@@ -898,10 +918,10 @@ const Home = () => {
                 </p>
 
                 <div className="cta-buttons">
-                  <Link to="#" className="btn btn-primary">
+                  <Link to="/contact" className="btn btn-primary">
                     Contact Us Today
                   </Link>
-                  <Link to="#" className="btn btn-outline">
+                  <Link to="/contact" className="btn btn-outline">
                     Schedule a Call
                   </Link>
                 </div>
@@ -944,41 +964,69 @@ const Home = () => {
         </div>
 
         <div className="container mb-4" data-aos="fade-up" data-aos-delay="100">
-          <div className="row g-4">
-            <div
-              className="col-lg-12"
-              data-aos="fade-right"
-              data-aos-delay="200"
-            >
-              <div
-                className="d-flex flex-wrap gap-4"
-                data-aos="fade-up"
-                data-aos-delay="400"
+          <div className="gap-2">
+            {groupData?.length > 0 ? (
+              <Swiper
+                modules={[Autoplay, Navigation, Pagination]}
+                spaceBetween={5}
+                slidesPerView={3}
+                loop={true}
+                autoplay={{
+                  delay: 2500, // 2.5 sec
+                  disableOnInteraction: false,
+                }}
+                // navigation={true} // 👈 adds arrows
+                pagination={{ clickable: true }} // 👈 adds dots
+                breakpoints={{
+                  // when window width is >= 320px
+                  320: {
+                    slidesPerView: 1,
+                    spaceBetween: 10,
+                  },
+                  // when window width is >= 576px
+                  576: {
+                    slidesPerView: 2,
+                    spaceBetween: 15,
+                  },
+                  // when window width is >= 768px
+                  768: {
+                    slidesPerView: 3,
+                    spaceBetween: 20,
+                  },
+                  // when window width is >= 992px
+                  992: {
+                    slidesPerView: 4,
+                    spaceBetween: 30,
+                  },
+                }}
               >
-                {groupData?.length > 0 ? (
-                  groupData?.map((el, i) => {
-                    return (
-                      <div className="cardDiv selected-builder-div col-3">
+                {groupData?.map((el, i) => {
+                  return (
+                    <SwiperSlide>
+                      <div className="cardDiv selected-builder-div col-sm-6 col-md-4 col-lg-4">
                         <div className="project-img">
                           <img src={el?.imageInfo?.url} className="img-fuild" />
                         </div>
                         <div className="experiance">
                           <span>Experiance : 100</span>&nbsp;&nbsp; |
                           &nbsp;&nbsp;
-                          <span>Total Projects : 10</span>
+                          <span>Projects : 10</span>
                         </div>
-                        <span className="btn btn-primary mt-4">
+                        <Link
+                          to={`/builders/${city}/${el?.groupSlug}`}
+                          className="btn btn-primary mt-4"
+                        >
                           View All Projects{" "}
                           <i className="bi bi-arrow-up-right"></i>
-                        </span>
+                        </Link>
                       </div>
-                    );
-                  })
-                ) : (
-                  <h4>No Property available for {city}</h4>
-                )}
-              </div>
-            </div>
+                    </SwiperSlide>
+                  );
+                })}
+              </Swiper>
+            ) : (
+              <h4>No Property available for {city}</h4>
+            )}
           </div>
         </div>
       </section>
@@ -1020,7 +1068,7 @@ const Home = () => {
                         src={`assets/img/${el?.image}`}
                         className="img-fuild"
                       />
-                      <span>{el?.name}</span>
+                      <span>{capitaliseWords(el?.name)}</span>
                     </div>
                   );
                 })}

@@ -35,33 +35,27 @@ const PropertyDetails = () => {
   });
   let bookingMode = useRef("offline");
 
-  const { id } = useParams();
+  const { slug } = useParams();
   useEffect(() => {
-    fetchProperty(id);
-  }, [id]);
+    fetchProperty(slug);
+  }, [slug]);
 
   useEffect(() => {}, [previewUnitImg]);
 
-  const fetchProperty = async (id) => {
+  const fetchProperty = async (slug) => {
     try {
       let payload = {
-        projectId: id,
+        projectSlug: slug,
       };
       const projectData = await apiFetch(
-        "/api/project/getProjectById",
+        "/api/project/getProjectBySlug",
         payload
       );
       if (projectData?.success) {
         setProjectDetails(projectData?.data?.[0]);
         setSimilarProject(projectData?.similarProject);
       } else {
-        dispatch(
-          isToastShow({
-            isShow: true,
-            type: "error",
-            message: projectData?.message,
-          })
-        );
+        
       }
     } catch (error) {
       dispatch(
@@ -172,63 +166,57 @@ const PropertyDetails = () => {
           <div className="row">
             <div className="col-lg-12">
               <div
-                className="property-hero d-flex"
+                className="property-hero d-flex flex-wrap"
                 data-aos="fade-up"
                 data-aos-delay="200"
               >
                 <div className="col-lg-7">
                   <div className="hero-image-container">
-                    <div className="property-gallery-slider swiper init-swiper">
-                      <div className="swiper-wrapper">
-                        <div className="swiper-slide">
-                          <Swiper
-                            modules={[Autoplay, Navigation, Pagination]}
-                            spaceBetween={30}
-                            slidesPerView={1}
-                            loop={true}
-                            autoplay={{
-                              delay: 2500, // 2.5 sec
-                              disableOnInteraction: false,
-                            }}
-                            // navigation={true} // 👈 adds arrows
-                            pagination={{ clickable: true }} // 👈 adds dots
-                          >
-                            {projectDetails?.projectImg?.map((el, i) => {
-                              return (
-                                <SwiperSlide>
-                                  <img
-                                    src={el?.imageInfo?.url}
-                                    className="img-fluid hero-image"
-                                    alt="Property Main Image"
-                                  />
-                                </SwiperSlide>
-                              );
-                            })}
-                          </Swiper>
-                          <div className="hero-overlay">
-                            <div className="property-badge">
-                              {/* <span className="status-badge for-rent">
-                              For Rent
-                            </span> */}
-                              <span className="featured-badge">
-                                New Project
-                              </span>
-                            </div>
-                            <button
-                              type="button"
-                              className="virtual-tour-btn"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModal"
-                              onClick={() =>
-                                setProjectTour(projectDetails?.projectTour)
-                              }
-                            >
-                              <i className="bi bi-play-circle"></i>
-                              Project Tour
-                            </button>
-                          </div>
+                    <div className="property-gallery-slider">
+                      <Swiper
+                        modules={[Autoplay, Navigation, Pagination]}
+                        spaceBetween={30}
+                        slidesPerView={1}
+                        loop={true}
+                        autoplay={{
+                          delay: 2500, // 2.5 sec
+                          disableOnInteraction: false,
+                        }}
+                        // navigation={true} // 👈 adds arrows
+                        pagination={{ clickable: true }} // 👈 adds dots
+                      >
+                        {projectDetails?.projectImg?.map((el, i) => {
+                          return (
+                            <SwiperSlide>
+                              <img
+                                src={el?.imageInfo?.url}
+                                className="img-fluid hero-image"
+                                alt="Property Main Image"
+                              />
+                            </SwiperSlide>
+                          );
+                        })}
+                      </Swiper>
+                      <div className="hero-overlay">
+                        <div className="property-badge">
+                          <span className="featured-badge">
+                            {capitaliseWords(projectDetails?.propertyType)}
+                          </span>
                         </div>
+                        <button
+                          type="button"
+                          className="virtual-tour-btn"
+                          data-bs-toggle="modal"
+                          data-bs-target="#exampleModal"
+                          onClick={() =>
+                            setProjectTour(projectDetails?.projectTour)
+                          }
+                        >
+                          <i className="bi bi-play-circle"></i>
+                          Project Tour
+                        </button>
                       </div>
+
                       {/* <div className="swiper-button-next"></div>
                     <div className="swiper-button-prev"></div> */}
                     </div>
@@ -870,7 +858,7 @@ const PropertyDetails = () => {
                       <SwiperSlide key={i}>
                         <img
                           src={el?.imageInfo?.url}
-                          className="img-fluid hero-image"
+                          className="img-fluid approve-bank hero-image"
                           alt={`Property Image ${i + 1}`}
                         />
                       </SwiperSlide>

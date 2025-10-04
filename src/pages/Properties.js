@@ -1,16 +1,28 @@
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation, useParams } from "react-router-dom";
 import Input from "../component/Input";
-import { apiFetch, formatIndianNumber, formatNumber } from "../utils/utils";
+import {
+  apiFetch,
+  formatIndianNumber,
+  formatNumber,
+  modalClose,
+} from "../utils/utils";
 import { isToastShow } from "../redux/slice/toastSlice";
 import useDebounce from "../utils/debounce";
 import Dropdown from "../component/Dropdown";
+import DateTimePicker from "../component/DateTimePicker";
+import { isLoadingShow } from "../redux/slice/loadingSlice";
+import Button from "../component/Button";
 
 const Properties = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const userState = useSelector((state) => state?.user?.userInfo);
+  let locationSpilt = location?.pathname?.split("/");
+  const [city, setCity] = useState(locationSpilt?.[2]);
+  const [groupName, setGroupName] = useState(locationSpilt?.[3]);
   const [query, setQuery] = useState("");
-  const [city, setCity] = useState("palghar");
   const [price, setPrice] = useState("");
   const [propertiesData, setPropertiesData] = useState([]);
   const [isSuggectionClick, setIsSuggectionClick] = useState(false);
@@ -19,13 +31,22 @@ const Properties = () => {
   const [totatPages, setTotalPages] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [activePage, setActivePage] = useState(1);
+  const [selectPropertyId, setSelectPropertyId] = useState("");
+  const [bookingSlot, setBookingSlot] = useState({
+    mode: "",
+    date_time: "",
+    present_by: "",
+  });
+  let bookingMode = useRef("offline");
   const debouncedQuery = useDebounce(query, 250);
-
+  
   useEffect(() => {
+   
     if (debouncedQuery && isSuggectionClick == false) {
       getSuggestionByCity(query);
     }
   }, [debouncedQuery]);
+
 
   useEffect(() => {
     onCityChange();
@@ -36,6 +57,7 @@ const Properties = () => {
     try {
       let payload = {
         city,
+        groupName,
         page: activePage,
         search: suggestionName,
       };
@@ -48,14 +70,6 @@ const Properties = () => {
         setTotalPages(projectData?.totalPages);
         setTotalCount(projectData?.total);
         setLocality_builder_data([]);
-      } else {
-        dispatch(
-          isToastShow({
-            isShow: true,
-            type: "error",
-            message: projectData?.message,
-          })
-        );
       }
     } catch (error) {
       dispatch(
@@ -144,6 +158,64 @@ const Properties = () => {
     },
   ];
 
+  const onChangeHandler = (data) => {
+    setBookingSlot({
+      mode: bookingMode.current,
+      data_time: data,
+      present_by: bookingMode.current === "online" ? "googlemeet" : "",
+    });
+  };
+
+  const submitRequestForBooking = async () => {
+    if (userState == "" || userState == undefined || userState?.isLogin === 0) {
+      return dispatch(
+        isToastShow({
+          isShow: true,
+          type: "success",
+          message: "Before slot booking, please login first",
+        })
+      );
+    }
+
+    dispatch(isLoadingShow({ isShow: true }));
+    bookingSlot["projectId"] = selectPropertyId;
+    bookingSlot["userId"] = userState?._id;
+
+    try {
+      const requestData = await apiFetch(
+        "/api/project/submitRequestForBooking",
+        bookingSlot
+      );
+      if (requestData?.success) {
+        dispatch(
+          isToastShow({
+            isShow: true,
+            type: "success",
+            message: requestData?.message,
+          })
+        );
+
+        modalClose("bookingNowBackdrop");
+      } else {
+        dispatch(
+          isToastShow({
+            isShow: true,
+            type: "error",
+            message: requestData?.message,
+          })
+        );
+      }
+    } catch (error) {
+      dispatch(
+        isToastShow({
+          isShow: true,
+          type: "error",
+          message: "something went wrong",
+        })
+      );
+    }
+  };
+
   return (
     <main className="main">
       <div className="page-title light-background">
@@ -181,7 +253,7 @@ const Properties = () => {
                         icon={
                           <i className="bi bi-crosshair me-1 field-icon"></i>
                         }
-                        onChange={(e) => setCity(e.target.value)}
+                        // onChange={(e) => setCity(e.target.value)}
                       />
                     </div>
                     <div className="col-lg-4 col-md-4">
@@ -269,7 +341,6 @@ const Properties = () => {
                 >
                   <div className="row g-4">
                     {propertiesData?.map((property, i) => {
-                      
                       return (
                         <div
                           className="col-lg-4 col-md-6"
@@ -338,6 +409,7 @@ const Properties = () => {
                               </div>
                             </Link>
                             <hr />
+
                             <div className="property-details">
                               <strong>Developer Info</strong>
                               <div className="property-agent-info">
@@ -363,6 +435,16 @@ const Properties = () => {
                                     </span>
                                   </div>
                                 </Link>
+                              </div>
+                              <div
+                                className="book-btn my-4"
+                                data-bs-toggle="modal"
+                                data-bs-target="#bookingNowBackdrop"
+                                onClick={() =>
+                                  setSelectPropertyId(property?._id)
+                                }
+                              >
+                                <i class="bi bi-telephone mx-1"></i>Book Now
                               </div>
                             </div>
                           </div>
@@ -726,6 +808,126 @@ const Properties = () => {
           )}
         </div>
       </section>
+
+      {/* schedule modal */}
+      <div
+        className="modal fade"
+        id="bookingNowBackdrop"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabIndex="-1"
+        aria-labelledby="bookingNowBackdropLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="bookingNowBackdropLabel">
+                Booking Time!!
+              </h1>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <div>
+                <ul
+                  className="nav nav-tabs"
+                  id="configurationTab"
+                  role="tablist"
+                >
+                  <li className="nav-item" role="presentation">
+                    <button
+                      className="nav-link active"
+                      id="slotBooking-tab"
+                      data-bs-toggle="tab"
+                      data-bs-target="#slotBooking"
+                      type="button"
+                      role="tab"
+                      aria-controls="slotBooking"
+                      aria-selected="true"
+                      onClick={() => (bookingMode.current = "offline")}
+                    >
+                      <h6>Book Site Visit</h6>
+                    </button>
+                  </li>
+
+                  <li className="nav-item" role="presentation">
+                    <button
+                      className="nav-link"
+                      id="meetBooking-tab"
+                      data-bs-toggle="tab"
+                      data-bs-target="#meetBooking"
+                      type="button"
+                      role="tab"
+                      aria-controls="meetBooking"
+                      aria-selected="true"
+                      onClick={() => (bookingMode.current = "online")}
+                    >
+                      <h6>Book Online Presantation</h6>
+                    </button>
+                  </li>
+                </ul>
+
+                <div className="tab-content" id="bookingTabContent">
+                  <div
+                    className="tab-pane fade show active"
+                    id="slotBooking"
+                    role="tabpanel"
+                    aria-labelledby="slotBooking-tab"
+                  >
+                    <DateTimePicker
+                      label="Select your pick up date"
+                      onChange={(data) => onChangeHandler(data)}
+                    />
+                  </div>
+                </div>
+
+                <div className="tab-content" id="bookingTabContent">
+                  <div
+                    className="tab-pane fade show"
+                    id="meetBooking"
+                    role="tabpanel"
+                    aria-labelledby="meetBooking-tab"
+                  >
+                    <div className="d-flex">
+                      <DateTimePicker
+                        label="Book Online Slot"
+                        onChange={(data) => onChangeHandler(data)}
+                      />
+                      <div className="form-check align-self-center">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          name="googleMeet"
+                          checked="true"
+                          id="googleMeet1"
+                        />
+                        <label className="form-check-label" for="googleMeet1">
+                          <i className="bi bi-camera-video-fill me-2"></i>
+                          Google Meet
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <div className="w-100" onClick={() => submitRequestForBooking()}>
+                <Button
+                  type="submit"
+                  icon={<i className="bi bi-check-lg fs-4"></i>}
+                  label="Submit Request"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   );
 };

@@ -88,3 +88,16 @@ export const formatIndianNumber=(num)=> {
   }
   return num?.toString();
 }
+
+export const slugGenerate = (str) => {
+  return str
+    ?.toString()
+    ?.normalize("NFD") // split accented letters
+    ?.replace(/[\u0300-\u036f]/g, "") // remove diacritics
+    ?.toLowerCase()
+    ?.trim()
+    ?.replace(/[^\p{L}\p{N}\s-]/gu, "") // keep letters, numbers, spaces and hyphens
+    ?.replace(/\s+/g, "-") // spaces → hyphens
+    ?.replace(/-+/g, "-") // collapse multiple hyphens
+    ?.replace(/^-|-$/g, ""); // trim leading/trailing hyphen
+};

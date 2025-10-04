@@ -347,7 +347,7 @@ h6 {
   /* padding: 0 30px; */
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 
 .city-search-div > .input-group-div {
@@ -399,18 +399,29 @@ h6 {
   padding: 10px !important;
   width: 630px;
 }
-.selected-project-div > .project-img > img {
-  height: 200px;
-  width: 200px;
-  border-radius: 5px;
+
+.project-img > img {
+     height: 150px;
+    width: 200px;
+    border-radius: 5px;
+    object-fit: contain;
 }
 
-.selected-project-div > .project-info {
+.project-left-img{
+  height: 100%;
+}
+.project-left-img > img {
+    height: 100%;
+    width: 100%;
+    border-radius: 5px;
+}
+
+.project-info {
   padding: 10px;
   width: 100%;
 }
 
-.selected-project-div > .project-info > .book-btn {
+.book-btn {
   float: right;
   background: var(--accent-color);
   color: white;
@@ -455,18 +466,21 @@ h6 {
   color: var(--accent-color);
 }
 
-.selected-builder-div > .project-img {
-  height: 140px;
-  width: 250px;
-  align-content: center;
+.selected-builder-div {
+  text-align: center;
+  margin-bottom: 25px;
+  width: auto;
 }
 
-.selected-builder-div > .experiance {
+.experiance {
   font-size: 15px;
+  margin-top: 15px;
 }
 
-.selected-builder-div > .project-img > img {
-  width: 100%;
+.approve-bank{
+  height: 200px;
+  width: 300px;
+  object-fit: contain;
 }
 
 /* Navmenu - Mobile */
@@ -5495,35 +5509,24 @@ h6 {
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
 }
 
-.property-details
-  .property-hero
-  .hero-image-container
-  .property-gallery-slider
-  .swiper-wrapper {
+.property-details .property-hero .hero-image-container {
   height: auto !important;
 }
 
-.property-details
-  .property-hero
-  .hero-image-container
-  .property-gallery-slider
-  .hero-image {
+.property-details .property-hero .hero-image-container .hero-image {
   width: 100%;
   height: 400px;
   object-fit: cover;
 }
 
-.property-details
-  .property-hero
-  .hero-image-container
-  .property-gallery-slider
-  .hero-overlay {
+.property-details .property-hero .hero-image-container .hero-overlay {
   position: absolute;
+  height: 150px;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, transparent 60%, rgba(0, 0, 0, 0.3));
+  /* background: linear-gradient(135deg, transparent 60%, rgba(0, 0, 0, 0.3)); */
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -5534,7 +5537,6 @@ h6 {
 .property-details
   .property-hero
   .hero-image-container
-  .property-gallery-slider
   .hero-overlay
   .property-badge {
   display: flex;
@@ -5545,7 +5547,6 @@ h6 {
 .property-details
   .property-hero
   .hero-image-container
-  .property-gallery-slider
   .hero-overlay
   .property-badge
   .status-badge {
@@ -5561,7 +5562,6 @@ h6 {
 .property-details
   .property-hero
   .hero-image-container
-  .property-gallery-slider
   .hero-overlay
   .property-badge
   .status-badge.for-rent {
@@ -5571,7 +5571,6 @@ h6 {
 .property-details
   .property-hero
   .hero-image-container
-  .property-gallery-slider
   .hero-overlay
   .property-badge
   .featured-badge {
@@ -5587,7 +5586,6 @@ h6 {
 .property-details
   .property-hero
   .hero-image-container
-  .property-gallery-slider
   .hero-overlay
   .virtual-tour-btn {
   background: rgba(255, 255, 255, 0.95);
@@ -5605,7 +5603,6 @@ h6 {
 .property-details
   .property-hero
   .hero-image-container
-  .property-gallery-slider
   .hero-overlay
   .virtual-tour-btn
   i {
@@ -5615,7 +5612,6 @@ h6 {
 .property-details
   .property-hero
   .hero-image-container
-  .property-gallery-slider
   .hero-overlay
   .virtual-tour-btn:hover {
   background: var(--surface-color);
@@ -5659,8 +5655,7 @@ h6 {
 .property-details
   .property-hero
   .thumbnail-gallery
-  .property-thumbnails-slider
-  .swiper-wrapper {
+  .property-thumbnails-slider {
   height: auto !important;
 }
 
@@ -5688,8 +5683,7 @@ h6 {
 .property-details
   .property-hero
   .thumbnail-gallery
-  .property-thumbnails-slider
-  .swiper-slide {
+  .property-thumbnails-slider {
   position: relative;
   opacity: 0.6;
   transition: opacity 0.3s ease;
@@ -5699,7 +5693,7 @@ h6 {
   .property-hero
   .thumbnail-gallery
   .property-thumbnails-slider
-  .swiper-slide.swiper-slide-thumb-active {
+  .swiper-slide-thumb-active {
   opacity: 1;
 }
 
@@ -5707,7 +5701,7 @@ h6 {
   .property-hero
   .thumbnail-gallery
   .property-thumbnails-slider
-  .swiper-slide.swiper-slide-thumb-active
+  .swiper-slide-thumb-active
   .thumbnail-img {
   border-color: var(--accent-color);
 }
@@ -5716,7 +5710,6 @@ h6 {
   .property-hero
   .thumbnail-gallery
   .property-thumbnails-slider
-  .swiper-slide
   .photo-count {
   position: absolute;
   top: 50%;
@@ -6929,7 +6922,7 @@ p {
   font-weight: 600;
 }
 
-.agent-profile .testimonials-section .swiper-wrapper {
+.agent-profile .testimonials-section {
   height: auto !important;
 }
 
@@ -10527,7 +10520,6 @@ p {
   border-radius: 4px;
   z-index: 99;
   box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.1);
-  width: 200px;
 }
 
 .suggestionDiv ul {
@@ -10548,7 +10540,7 @@ p {
   visibility: visible;
 }
 
-.home-visible{
+.home-visible {
   width: 83%;
   text-align: justify;
   max-height: 200px;
