@@ -259,14 +259,7 @@ const Header = () => {
                       Disclaimer
                     </Link>
                   </li>
-                  <li onClick={() => setActiveMenu("properties")}>
-                    <Link
-                      to="/properties"
-                      className={activeMenu === "properties" ? "active" : ""}
-                    >
-                      Properties
-                    </Link>
-                  </li>
+                  
                   <li onClick={() => setActiveMenu("services")}>
                     <Link
                       to="/services"
