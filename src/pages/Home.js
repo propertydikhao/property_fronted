@@ -614,7 +614,7 @@ const Home = () => {
                           </span>
                         </div>
                         <div className="d-flex flex-wrap justify-content-between gap-2 mt-2">
-                          <div>
+                          <div className="d-flex flex-wrap">
                             {el?.configuration?.map((conf, i) => {
                               return (
                                 <span className="me-1">{conf?.bhk}BHK,</span>
