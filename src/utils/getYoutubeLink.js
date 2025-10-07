@@ -28,7 +28,7 @@ export default function YouTubePlayer({
 }) {
   const videoId = getYouTubeId(url);
 
-  if (!videoId) return <p>Invalid YouTube URL</p>;
+  // if (!videoId) return <p>No Video Found</p>;
 
   const embedUrl = `https://www.youtube.com/embed/${videoId}${
     autoplay ? "?autoplay=1&mute=1" : ""

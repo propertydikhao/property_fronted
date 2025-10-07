@@ -4,6 +4,7 @@ import { Link, useLocation, useParams } from "react-router-dom";
 import Input from "../component/Input";
 import {
   apiFetch,
+  capitaliseWords,
   formatIndianNumber,
   formatNumber,
   modalClose,
@@ -19,9 +20,9 @@ const Properties = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const userState = useSelector((state) => state?.user?.userInfo);
-  let locationSpilt = location?.pathname?.split("/");
-  const [city, setCity] = useState(locationSpilt?.[2]);
-  const [groupName, setGroupName] = useState(locationSpilt?.[3]);
+  const [locality, setLocality] = useState("");
+  const [groupName, setGroupName] = useState("");
+  const [city, setCity] = useState("");
   const [query, setQuery] = useState("");
   const [price, setPrice] = useState("");
   const [propertiesData, setPropertiesData] = useState([]);
@@ -39,16 +40,21 @@ const Properties = () => {
   });
   let bookingMode = useRef("offline");
   const debouncedQuery = useDebounce(query, 250);
-  
+
   useEffect(() => {
-   
     if (debouncedQuery && isSuggectionClick == false) {
       getSuggestionByCity(query);
     }
   }, [debouncedQuery]);
 
-
   useEffect(() => {
+    let locationSpilt = location?.pathname?.split("/");
+    if (locationSpilt?.[1] === "properties") {
+      setLocality(locationSpilt?.[3]);
+    } else {
+      setGroupName(locationSpilt?.[3]);
+    }
+    setCity(locationSpilt?.[2]);
     onCityChange();
   }, [activePage, city, suggestionName]);
 
@@ -58,6 +64,7 @@ const Properties = () => {
       let payload = {
         city,
         groupName,
+        locality,
         page: activePage,
         search: suggestionName,
       };
@@ -326,7 +333,7 @@ const Properties = () => {
                     <div className="results-info">
                       <h5>{totalCount} Properties Found</h5>
                       <p className="text-muted">
-                        Showing properties in Beverly Hills, CA
+                        Showing properties in {capitaliseWords(city)}
                       </p>
                     </div>
                   </div>
@@ -341,6 +348,7 @@ const Properties = () => {
                 >
                   <div className="row g-4">
                     {propertiesData?.map((property, i) => {
+                      console.log("propery", property);
                       return (
                         <div
                           className="col-lg-4 col-md-6"
@@ -348,7 +356,7 @@ const Properties = () => {
                         >
                           <div className="property-item">
                             <Link
-                              to={`property-details/${property?.projectSlug}`}
+                              to={`/properties/property-details/${property?.projectSlug}`}
                               className="property-link"
                             >
                               <div className="property-image-wrapper">
@@ -379,7 +387,7 @@ const Properties = () => {
                                   </div>
                                   {/* <div className="property-type">House</div> */}
                                 </div>
-                                <h4 className="property-title">
+                                <h4 className="property-title fs-6 fw-bold">
                                   {property?.projectName}
                                 </h4>
                                 <p className="property-address">
@@ -420,7 +428,8 @@ const Properties = () => {
                                   <div className="agent-avatar">
                                     <img
                                       src={
-                                        property?.groupDetails?.imageInfo?.url
+                                        property?.groupDetails?.[0]?.imageInfo
+                                          ?.url
                                       }
                                       alt="Agent"
                                     />
@@ -430,8 +439,19 @@ const Properties = () => {
                                       {property?.groupDetails?.groupName}
                                     </strong>
                                     <span>
-                                      {property?.groupDetails?.totalExperience}{" "}
-                                      Experience
+                                      {
+                                        property?.groupDetails?.[0]
+                                          ?.totalExperience
+                                      }
+                                      + Experience
+                                    </span>
+                                    &nbsp;&nbsp;| &nbsp;&nbsp;
+                                    <span>
+                                      {
+                                        property?.groupDetails?.[0]
+                                          ?.deliveredProject
+                                      }
+                                      + Delivered Project
                                     </span>
                                   </div>
                                 </Link>
@@ -906,7 +926,10 @@ const Properties = () => {
                           checked="true"
                           id="googleMeet1"
                         />
-                        <label className="form-check-label" for="googleMeet1">
+                        <label
+                          className="form-check-label"
+                          htmlFor="googleMeet1"
+                        >
                           <i className="bi bi-camera-video-fill me-2"></i>
                           Google Meet
                         </label>

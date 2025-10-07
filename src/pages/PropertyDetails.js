@@ -55,7 +55,6 @@ const PropertyDetails = () => {
         setProjectDetails(projectData?.data?.[0]);
         setSimilarProject(projectData?.similarProject);
       } else {
-        
       }
     } catch (error) {
       dispatch(
@@ -68,7 +67,31 @@ const PropertyDetails = () => {
     }
   };
 
-  let reraNo = projectDetails?.reraNo?.split(",");
+  const mergeReraData = () => {
+    const reraNos = projectDetails?.reraNo || "";
+    const reraLinks = projectDetails?.reraLink || "";
+
+    // If both are empty → return empty array early
+    if (!reraNos.trim() && !reraLinks.trim()) {
+      return [];
+    }
+
+    const reraNoArr = reraNos
+      .split(",")
+      .map((r) => r.trim())
+      .filter(Boolean);
+    const reraLinkArr = reraLinks
+      .split(",")
+      .map((r) => r.trim())
+      .filter(Boolean);
+
+    return reraNoArr.map((no, index) => ({
+      reraNo: no,
+      reraLink: reraLinkArr[index] || "",
+    }));
+  };
+  const reraData = mergeReraData();
+
   let pros = projectDetails?.pros?.split(",");
   let cons = projectDetails?.cons?.split(",");
 
@@ -203,18 +226,6 @@ const PropertyDetails = () => {
                             {capitaliseWords(projectDetails?.propertyType)}
                           </span>
                         </div>
-                        <button
-                          type="button"
-                          className="virtual-tour-btn"
-                          data-bs-toggle="modal"
-                          data-bs-target="#exampleModal"
-                          onClick={() =>
-                            setProjectTour(projectDetails?.projectTour)
-                          }
-                        >
-                          <i className="bi bi-play-circle"></i>
-                          Project Tour
-                        </button>
                       </div>
 
                       {/* <div className="swiper-button-next"></div>
@@ -363,13 +374,11 @@ const PropertyDetails = () => {
                     <div className="stat-card" style={{ width: "300px" }}>
                       <div className="stat-content">
                         <span className="stat-number">
-                          {reraNo?.length > 0 &&
-                            reraNo?.map((el, i) => {
+                          {reraData?.length > 0 &&
+                            reraData?.map((el, i) => {
                               return (
                                 <div>
-                                  <Link to="https://maharera.maharashtra.gov.in/">
-                                    {el}
-                                  </Link>
+                                  <Link to={el?.reraLink}>{el?.reraNo}</Link>
                                   <i className="bi bi-arrow-up-right mx-1 fs-6"></i>
                                 </div>
                               );
@@ -396,9 +405,9 @@ const PropertyDetails = () => {
 
                 <div className="features-grid mt-4">
                   <div className="row">
-                    <div className="col-md-6">
+                    <div className="col-md-12">
                       <h5>Interior Amenities</h5>
-                      <ul className="feature-list">
+                      <ul className="feature-list d-flex gap-4 flex-wrap">
                         {projectDetails?.internalamenities?.length > 0 &&
                           projectDetails?.internalamenities?.map(
                             (internal, i) => {
@@ -411,9 +420,9 @@ const PropertyDetails = () => {
                           )}
                       </ul>
                     </div>
-                    <div className="col-md-6">
+                    <div className="col-md-12">
                       <h5>External Amenities</h5>
-                      <ul className="feature-list">
+                      <ul className="feature-list feature-list d-flex gap-4 flex-wrap">
                         {projectDetails?.externalamenities?.length > 0 &&
                           projectDetails?.externalamenities?.map(
                             (external, i) => {
@@ -654,12 +663,12 @@ const PropertyDetails = () => {
                     {capitaliseWords(projectDetails?.projectName)} QR Codes
                   </h3>
                   <div className="d-flex flex-wrap">
-                    {reraNo?.length > 0 &&
-                      reraNo?.map((el, i) => {
+                    {reraData?.length > 0 &&
+                      reraData?.map((el, i) => {
                         return (
-                          <div className="d-flex flex-column align-items-center">
-                            <QRCode value={el} size={100} />
-                            <span>{el}</span>
+                          <div className="d-flex flex-column align-items-center me-2">
+                            <QRCode value={el?.reraLink} size={100} />
+                            <span>{el?.reraNo}</span>
                           </div>
                         );
                       })}
@@ -799,43 +808,93 @@ const PropertyDetails = () => {
                 data-aos="fade-up"
                 data-aos-delay="600"
               >
-                <div className="cardDiv">
-                  <h3>
-                    About{" "}
-                    {capitaliseWords(projectDetails?.groupDetails?.groupName)}
-                  </h3>
-                  <div className="d-flex ">
-                    <img
-                      src={projectDetails?.groupDetails?.imageInfo?.url}
-                      className="rounded"
-                      height={100}
-                      width={100}
-                    />
-                    <div style={{ padding: "5px 25px" }}>
-                      <h4>
-                        {capitaliseWords(
-                          projectDetails?.groupDetails?.groupName
-                        )}
-                      </h4>
-                      <div className="d-flex flex-column">
-                        <span>
-                          Total Experiance :{" "}
-                          {projectDetails?.groupDetails?.totalExperience}
-                        </span>
-                        <span>
-                          Total Delivered Project :{" "}
-                          {projectDetails?.groupDetails?.deliveredProject}
-                        </span>
+                <div className="row justify-content-between">
+                  <div className="cardDiv customWidth col-md-6 col-12">
+                    <h3>
+                      About{" "}
+                      {capitaliseWords(projectDetails?.groupDetails?.groupName)}
+                    </h3>
+                    <div className="d-flex ">
+                      <img
+                        src={projectDetails?.groupDetails?.imageInfo?.url}
+                        className="rounded"
+                        height={100}
+                        width={100}
+                      />
+                      <div style={{ padding: "5px 25px" }}>
+                        <h4>
+                          {capitaliseWords(
+                            projectDetails?.groupDetails?.groupName
+                          )}
+                        </h4>
+                        <div className="d-flex flex-column">
+                          <span>
+                            Total Experiance :{" "}
+                            {projectDetails?.groupDetails?.totalExperience}
+                          </span>
+                          <span>
+                            Total Delivered Project :{" "}
+                            {projectDetails?.groupDetails?.deliveredProject}
+                          </span>
+                        </div>
                       </div>
                     </div>
+
+                    <div
+                      className="mt-3 fw-normal fs-6"
+                      dangerouslySetInnerHTML={{
+                        __html: projectDetails?.groupDetails?.aboutUs,
+                      }}
+                    />
                   </div>
 
-                  <div
-                    className="mt-3 fw-normal fs-5"
-                    dangerouslySetInnerHTML={{
-                      __html: projectDetails?.groupDetails?.aboutUs,
-                    }}
-                  />
+                  <div className="cardDiv customWidth col-md-6 col-12">
+                    {/* Nav Tabs */}
+                    <ul className="nav nav-tabs" id="bhkTab" role="tablist">
+                      {console.log("groupedbhks", groupedbhks)}
+                      {groupedbhks?.map((conf, i) => (
+                        <li className="nav-item" role="presentation" key={i}>
+                          <button
+                            className={`nav-link ${i === 0 ? "active" : ""}`}
+                            id={`tab-${conf?.bhk}`}
+                            data-bs-toggle="tab"
+                            data-bs-target={`#pane-${conf?.bhk}`}
+                            type="button"
+                            role="tab"
+                            aria-controls={`pane-${conf?.bhk}`}
+                            aria-selected="true"
+                          >
+                            <h6>{conf?.bhk} BHK Sample Video</h6>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* Tab Content */}
+                    <div className="tab-content" id="bhkTabContent">
+                      {groupedbhks?.map((configBhk, i) => (
+                        <div
+                          key={i}
+                          className={`tab-pane fade ${
+                            i === 0 ? "show active" : ""
+                          }`}
+                          id={`pane-${configBhk?.bhk}`}
+                          role="tabpanel"
+                          aria-labelledby={`tab-${configBhk?.bhk}`}
+                        >
+                          <div className="py-3" key={`yt_${i}`}>
+                            {configBhk?.items?.[0]?.videoLink ? (
+                              <YouTubePlayer url={configBhk?.items?.[0]?.videoLink} />
+                            ) : (
+                              <div className="text-muted text-center py-4">
+                                No sample video available
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1075,36 +1134,6 @@ const PropertyDetails = () => {
         </div>
       </section>
 
-      {/* project tour */}
-
-      <div
-        className="modal fade"
-        id="exampleModal"
-        tabIndex="-1"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-dialog-centered modal-xl">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h1 className="modal-title fs-5" id="exampleModalLabel">
-                Project Tour
-              </h1>
-              <button
-                type="button"
-                onClick={() => setProjectTour("")}
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body">
-              <YouTubePlayer url={projectTour} />
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* preview unit image */}
       <div
         className="modal fade"
@@ -1235,7 +1264,10 @@ const PropertyDetails = () => {
                           checked="true"
                           id="googleMeet1"
                         />
-                        <label className="form-check-label" for="googleMeet1">
+                        <label
+                          className="form-check-label"
+                          htmlFor="googleMeet1"
+                        >
                           <i className="bi bi-camera-video-fill me-2"></i>
                           Google Meet
                         </label>

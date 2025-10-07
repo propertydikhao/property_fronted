@@ -27,6 +27,7 @@ const Home = () => {
   const userState = useSelector((state) => state?.user?.userInfo);
   const [city, setCity] = useState("mumbai");
   const [propertiesData, setPropertiesData] = useState([]);
+  const [services, setServices] = useState([]);
   const [bannerData, setBannerData] = useState([]);
   const [groupData, setGroupData] = useState([]);
   const [propertyType, setPropertyType] = useState("");
@@ -54,6 +55,7 @@ const Home = () => {
   useEffect(() => {
     fetchBanner();
     fetchGroup();
+    fetchService();
   }, []);
 
   const fetchProject = async () => {
@@ -80,6 +82,36 @@ const Home = () => {
         })
       );
     }
+  };
+
+  const fetchService = async () => {
+    try {
+      let payload = {
+        page: 1,
+        search: "",
+      };
+      const serviceData = await apiFetch("/api/service", payload);
+      if (serviceData?.success) {
+        setServices(serviceData?.results);
+      }
+    } catch (error) {
+      dispatch(
+        isToastShow({
+          isShow: true,
+          type: "error",
+          message: "something went wrong",
+        })
+      );
+    }
+  };
+
+  const groupedbhks = (configBhk) => {
+    return configBhk.reduce((acc, item) => {
+      if (!acc.find((x) => x.bhk === item.bhk)) {
+        acc.push(item);
+      }
+      return acc;
+    }, []);
   };
 
   const fetchBanner = async () => {
@@ -162,13 +194,13 @@ const Home = () => {
 
   const citySelectHandler = (el) => {
     modalClose("citySelectionBackdrop");
-    setCity(el?.name);
+    setCity(slugGenerate(el?.name));
   };
 
   const onChangeHandler = (data) => {
     setBookingSlot({
       mode: bookingMode.current,
-      data_time: data,
+      date_time: data,
       present_by: bookingMode.current === "online" ? "googlemeet" : "",
     });
   };
@@ -203,6 +235,57 @@ const Home = () => {
         );
 
         modalClose("bookingNowBackdrop");
+      } else {
+        dispatch(
+          isToastShow({
+            isShow: true,
+            type: "error",
+            message: requestData?.message,
+          })
+        );
+      }
+    } catch (error) {
+      dispatch(
+        isToastShow({
+          isShow: true,
+          type: "error",
+          message: "something went wrong",
+        })
+      );
+    }
+  };
+
+  const bookingServcie = async (serviceId) => {
+    if (userState == "" || userState == undefined || userState?.isLogin === 0) {
+      return dispatch(
+        isToastShow({
+          isShow: true,
+          type: "success",
+          message: "Before slot booking, please login first",
+        })
+      );
+    }
+
+    dispatch(isLoadingShow({ isShow: true }));
+
+    try {
+      let payload = {
+        serviceId,
+        userId: userState?._id,
+      };
+
+      const requestData = await apiFetch(
+        "/api/service/submitRequestForService",
+        payload
+      );
+      if (requestData?.success) {
+        dispatch(
+          isToastShow({
+            isShow: true,
+            type: "success",
+            message: requestData?.message,
+          })
+        );
       } else {
         dispatch(
           isToastShow({
@@ -362,7 +445,7 @@ const Home = () => {
                                         <i className="bi bi-geo-alt me-2"></i>
                                         {item?.groupDetails?.groupName}
                                       </div>
-                                    <div className="fw-light">Builders</div>
+                                      <div className="fw-light">Builders</div>
                                     </li>
                                   </Link>
                                 );
@@ -420,11 +503,10 @@ const Home = () => {
                     <img src="assets/img/bonus.svg" />
                   </div>
                   <div className="mt-3">
-                    <span className="title">
-                      Referral Bonus Refer Housiey & get bonus upto Rs 2lac
-                    </span>
+                    <span className="title">Referral Bonus</span>
                     <p className="caption">
-                      Get Flat Bonus Amount directly credited to your account.
+                      If you refer a client to PropertyDikhao, you’ll receive a
+                      20% commission as a reward for your recommendation.
                     </p>
                   </div>
                 </div>
@@ -435,8 +517,8 @@ const Home = () => {
                   <div className="mt-3">
                     <span className="title">Free Site Visit</span>
                     <p className="caption">
-                      Get Free Pickup & Drop for unlimited project's in the
-                      entire city.
+                      Get a free site visit with us — you don’t have to pay for
+                      anything.
                     </p>
                   </div>
                 </div>
@@ -447,8 +529,8 @@ const Home = () => {
                   <div className="mt-3">
                     <span className="title">Bottom Rate Guarantee</span>
                     <p className="caption">
-                      Rock Bottom Prices Guaranteed in return otherwise, get
-                      double the discount from us.
+                      Best rate guarantee — if you’ve paid more, you can claim
+                      the difference from us.
                     </p>
                   </div>
                 </div>
@@ -460,8 +542,8 @@ const Home = () => {
                   <div className="mt-3">
                     <span className="title">Relationship Manager</span>
                     <p className="caption">
-                      Get personalized RM managing everything from site visit to
-                      booking.
+                      Get personal assistance from experts who guide you with
+                      the best advice to own your property.
                     </p>
                   </div>
                 </div>
@@ -488,34 +570,45 @@ const Home = () => {
                   <h3>
                     <div className="property-dikhao-services">
                       <span>Property Dikhao</span>
-                      <div className="service">Home Interior</div>
+                      <div className="service">
+                        {services?.[0]?.serviceName}
+                      </div>
                     </div>
                   </h3>
-                  <p>
-                    Excepteur sint occaecat cupidatat non proident sunt in culpa
-                    qui officia deserunt mollit anim id est laborum
-                  </p>
                   <ul className="service-highlights">
                     <li>
-                      <i className="bi bi-check-circle-fill"></i> Comprehensive
-                      Listings
+                      <i className="bi bi-check-circle-fill"></i> Beautiful
+                      custom designs to your preference and budget.
                     </li>
                     <li>
-                      <i className="bi bi-check-circle-fill"></i> Advanced
-                      Filtering
+                      <i className="bi bi-check-circle-fill"></i> Punctual
+                      delivery of the project and clear pricing.
                     </li>
                     <li>
-                      <i className="bi bi-check-circle-fill"></i> Virtual Tours
+                      <i className="bi bi-check-circle-fill"></i> Master
+                      designers, professional craftsmen.
+                    </li>
+                    <li>
+                      <i className="bi bi-check-circle-fill"></i> High quality
+                      materials and quality workmanship.
+                    </li>
+                    <li>
+                      <i className="bi bi-check-circle-fill"></i> - 2D/3D
+                      extensive visualisation before execution.
                     </li>
                   </ul>
-                  <Link to="service-details" className="service-link">
-                    <span>Explore Now</span>
+                  <div
+                    className="service-link pe-auto"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => bookingServcie(services?.[0]?._id)}
+                  >
+                    <span>Book Now</span>
                     <i className="bi bi-arrow-up-right"></i>
-                  </Link>
+                  </div>
                 </div>
                 <div className="service-visual">
                   <img
-                    src="assets/img/real-estate/property-interior-2.webp"
+                    src={services?.[0]?.imageInfo?.url}
                     className="img-fluid"
                     alt="Property Search"
                     loading="lazy"
@@ -530,36 +623,48 @@ const Home = () => {
                   <h3>
                     <div className="property-dikhao-services">
                       <span>Property Dikhao</span>
-                      <div className="service">Home Loan</div>
+                      <div className="service">
+                        {services?.[1]?.serviceName}
+                      </div>
                     </div>
                   </h3>
-                  <p>
-                    Sed ut perspiciatis unde omnis iste natus error sit
-                    voluptatem accusantium doloremque laudantium totam rem
-                    aperiam
-                  </p>
+
                   <ul className="service-highlights">
                     <li>
-                      <i className="bi bi-check-circle-fill"></i> Market
-                      Analysis
+                      <i className="bi bi-check-circle-fill"></i> Assistance
+                      with an easy loan approval.
                     </li>
                     <li>
-                      <i className="bi bi-check-circle-fill"></i> Comparative
-                      Reports
+                      <i className="bi bi-check-circle-fill"></i> Multiple Bank
+                      Tie-ups , End-to-End Support.
+                    </li>
+
+                    <li>
+                      <i className="bi bi-check-circle-fill"></i> Lowest
+                      Interest Rates, Transparent Process.
+                    </li>
+
+                    <li>
+                      <i className="bi bi-check-circle-fill"></i> Check of
+                      Eligibility and Pre-Approval.
                     </li>
                     <li>
-                      <i className="bi bi-check-circle-fill"></i> Investment
-                      Insights
+                      <i className="bi bi-check-circle-fill"></i> Advice to
+                      First-Time Shopper, Balance Transfer Support.
                     </li>
                   </ul>
-                  <Link to="service-details" className="service-link">
-                    <span>Get Valuation</span>
+                  <div
+                    className="service-link"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => bookingServcie(services?.[1]?._id)}
+                  >
+                    <span>Book Now</span>
                     <i className="bi bi-arrow-up-right"></i>
-                  </Link>
+                  </div>
                 </div>
                 <div className="service-visual">
                   <img
-                    src="assets/img/real-estate/property-exterior-1.webp"
+                    src={services?.[1]?.imageInfo?.url}
                     className="img-fluid"
                     alt="Property Valuation"
                     loading="lazy"
@@ -599,12 +704,12 @@ const Home = () => {
                         <Link
                           to={`/properties/property-details/${el?.projectSlug}`}
                         >
-                          <h4>{el?.projectName}</h4>
+                          <h4 className="fs-6 fw-bold">{el?.projectName}</h4>
                         </Link>
                         <div className="d-flex justify-content-between">
                           <span>
                             By
-                            <span className="group-name mx-2">
+                            <span className="group-name mx-1">
                               {el?.groupDetails?.groupName}
                             </span>
                           </span>
@@ -615,7 +720,7 @@ const Home = () => {
                         </div>
                         <div className="d-flex flex-wrap justify-content-between gap-2 mt-2">
                           <div className="d-flex flex-wrap">
-                            {el?.configuration?.map((conf, i) => {
+                            {groupedbhks(el?.configuration)?.map((conf, i) => {
                               return (
                                 <span className="me-1">{conf?.bhk}BHK,</span>
                               );
@@ -624,7 +729,7 @@ const Home = () => {
 
                           <span>
                             <i className="bi bi-textarea me-1"></i>
-                            {el?.configuration?.[0]?.reraArea} sqFt
+                            {el?.reraAreaMin} sqFt - {el?.reraAreaMax} sqFt
                           </span>
                         </div>
                         <div className="d-flex justify-content-between mt-2">
@@ -832,7 +937,7 @@ const Home = () => {
                         <i className="bi bi-house-door"></i>
                       </div>
                       <div className="stat-number">
-                        <CountUpAnimation end={2500} />+
+                        <CountUpAnimation end={350} />+
                       </div>
                       <div className="stat-label">Homes Sold</div>
                       <p>
@@ -848,7 +953,7 @@ const Home = () => {
                         <i className="bi bi-people"></i>
                       </div>
                       <div className="stat-number">
-                        <CountUpAnimation end={96} />%
+                        <CountUpAnimation end={99} />%
                       </div>
                       <div className="stat-label">Client Satisfaction</div>
                       <p>
@@ -864,7 +969,7 @@ const Home = () => {
                         <i className="bi bi-clock-history"></i>
                       </div>
                       <div className="stat-number">
-                        <CountUpAnimation end={20} />+
+                        <CountUpAnimation end={5} />+
                       </div>
                       <div className="stat-label">Years Experience</div>
                       <p>
@@ -880,7 +985,7 @@ const Home = () => {
                         <i className="bi bi-award"></i>
                       </div>
                       <div className="stat-number">
-                        <CountUpAnimation end={45} />+
+                        <CountUpAnimation end={4} />+
                       </div>
                       <div className="stat-label">Industry Awards</div>
                       <p>
@@ -1008,9 +1113,9 @@ const Home = () => {
                           <img src={el?.imageInfo?.url} className="img-fuild" />
                         </div>
                         <div className="experiance">
-                          <span>Experiance : 100</span>&nbsp;&nbsp; |
-                          &nbsp;&nbsp;
-                          <span>Projects : 10</span>
+                          <span>Experiance : {el?.totalExperience}+</span>
+                          &nbsp;&nbsp; | &nbsp;&nbsp;
+                          <span>Projects : {el?.deliveredProject}+</span>
                         </div>
                         <Link
                           to={`/builders/${city}/${el?.groupSlug}`}
@@ -1175,7 +1280,10 @@ const Home = () => {
                           checked="true"
                           id="googleMeet1"
                         />
-                        <label className="form-check-label" for="googleMeet1">
+                        <label
+                          className="form-check-label"
+                          htmlFor="googleMeet1"
+                        >
                           <i className="bi bi-camera-video-fill me-2"></i>
                           Google Meet
                         </label>
