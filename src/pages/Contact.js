@@ -20,7 +20,7 @@ const Contact = () => {
       <section id="contact-2" className="contact-2 section">
         <div className="map-container mb-5">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d48389.78314118045!2d-74.006138!3d40.710059!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a22a3bda30d%3A0xb89d1fe6bc499443!2sDowntown%20Conference%20Center!5e0!3m2!1sen!2sus!4v1676961268712!5m2!1sen!2sus"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3765.308357448438!2d72.85455777601894!3d19.31242124450635!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7b02a035251cd%3A0xaf6b0e0e8746c565!2sNirmal%20Kunj%2C%20Navghar%20cross%20road%2C%20SV%20Rd%2C%20Asha%20Nagar%2C%20Rahul%20Park%2C%20Bhayandar%20East%2C%20Mira%20Bhayandar%2C%20Maharashtra%20401105!5e0!3m2!1sen!2sin!4v1759944750916!5m2!1sen!2sin"
             width="100%"
             height="500"
             style={{ border: "0" }}
@@ -39,7 +39,10 @@ const Contact = () => {
                 </div>
                 <div className="info-content">
                   <h4>Location</h4>
-                  <p>482 Pine Street, Seattle, Washington 98101</p>
+                  <p>
+                    04 NIRMAL KUNJ CHSL , S.V ROAD NEAR NARESH STEEL CENTER
+                    BHAYANDER EAST 401105{" "}
+                  </p>
                 </div>
               </div>
             </div>
@@ -51,8 +54,8 @@ const Contact = () => {
                 </div>
                 <div className="info-content">
                   <h4>Phone &amp; Email</h4>
-                  <p>+1 (206) 555-0192</p>
-                  <p>connect@example.com</p>
+                  <p>+91 9004338424</p>
+                  <p>propertydikhao@gmail.com</p>
                 </div>
               </div>
             </div>

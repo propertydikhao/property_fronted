@@ -90,6 +90,7 @@ const PropertyDetails = () => {
       reraLink: reraLinkArr[index] || "",
     }));
   };
+
   const reraData = mergeReraData();
 
   let pros = projectDetails?.pros?.split(",");
@@ -109,6 +110,15 @@ const PropertyDetails = () => {
         }, {})
       )
     : [];
+
+  const groupedbhksOnSimilar = (configBhk) => {
+    return configBhk.reduce((acc, item) => {
+      if (!acc.find((x) => x.bhk === item.bhk)) {
+        acc.push(item);
+      }
+      return acc;
+    }, []);
+  };
 
   const onChangeHandler = (data) => {
     setBookingSlot({
@@ -262,7 +272,7 @@ const PropertyDetails = () => {
                         Booking Site Visit
                       </button>
 
-                      <div className="row g-2">
+                      {/* <div className="row g-2">
                         <div className="col-6">
                           <button className="btn btn-outline-primary w-100">
                             <i className="bi bi-heart"></i>
@@ -275,7 +285,7 @@ const PropertyDetails = () => {
                             Share
                           </button>
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   <div
@@ -296,9 +306,18 @@ const PropertyDetails = () => {
                 <div className="pricing-section">
                   <div className="main-price">
                     Start With{" "}
-                    {formatIndianNumber(
-                      projectDetails?.configuration?.[0]?.allInc
-                    )}
+                    <span>
+                      <i className="bi bi-currency-rupee"></i>
+                      {formatIndianNumber(
+                        projectDetails?.configuration?.[0]?.allInc
+                      )}{" "}
+                      - <i className="bi bi-currency-rupee"></i>
+                      {formatIndianNumber(
+                        projectDetails?.configuration?.[
+                          projectDetails?.configuration?.length - 1
+                        ]?.allInc
+                      )}
+                    </span>
                   </div>
                   <div className="price-breakdown">
                     <span className="deposit">
@@ -335,9 +354,10 @@ const PropertyDetails = () => {
                       </div>
                       <div className="stat-content">
                         <span className="stat-number">
-                          {formatNumber(projectDetails?.reraAreaMin)}
+                          {formatNumber(projectDetails?.reraAreaMin)} -{" "}
+                          {formatNumber(projectDetails?.reraAreaMax)}
                         </span>
-                        <span className="stat-label">Sq Ft</span>
+                        <span className="stat-label">SqFt</span>
                       </div>
                     </div>
                     <div className="stat-card">
@@ -371,7 +391,7 @@ const PropertyDetails = () => {
                         <span className="stat-label">Land Parcel</span>
                       </div>
                     </div>
-                    <div className="stat-card" style={{ width: "300px" }}>
+                    {/* <div className="stat-card" style={{ width: "300px" }}>
                       <div className="stat-content">
                         <span className="stat-number">
                           {reraData?.length > 0 &&
@@ -386,13 +406,13 @@ const PropertyDetails = () => {
                         </span>
                         <span className="stat-label">Rera No.</span>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
 
               <div
-                className="property-details mb-5"
+                className="cardDiv property-details mb-5"
                 data-aos="fade-up"
                 data-aos-delay="400"
               >
@@ -402,7 +422,8 @@ const PropertyDetails = () => {
                     __html: projectDetails?.projectDescription,
                   }}
                 />
-
+              </div>
+              <div className="cardDiv">
                 <div className="features-grid mt-4">
                   <div className="row">
                     <div className="col-md-12">
@@ -440,7 +461,7 @@ const PropertyDetails = () => {
               </div>
 
               <div
-                className="floor-plan-section mb-5"
+                className="cardDiv floor-plan-section my-5"
                 data-aos="fade-up"
                 data-aos-delay="500"
               >
@@ -604,12 +625,14 @@ const PropertyDetails = () => {
                                 return (
                                   <tr>
                                     <td style={{ alignContent: "center" }}>
-                                      {item?.reraArea}
+                                      {item?.reraArea} sqft
                                     </td>
                                     <td style={{ alignContent: "center" }}>
+                                      <i className="bi bi-currency-rupee"></i>
                                       {formatIndianNumber(item?.allInc)}
                                     </td>
                                     <td style={{ alignContent: "center" }}>
+                                      <i className="bi bi-currency-rupee"></i>
                                       {formatIndianNumber(item?.downPayment)}
                                     </td>
                                     <td style={{ alignContent: "center" }}>
@@ -668,7 +691,9 @@ const PropertyDetails = () => {
                         return (
                           <div className="d-flex flex-column align-items-center me-2">
                             <QRCode value={el?.reraLink} size={100} />
-                            <span>{el?.reraNo}</span>
+                            <Link to={el?.reraLink}>
+                              <span>{el?.reraNo}</span>
+                            </Link>
                           </div>
                         );
                       })}
@@ -830,11 +855,17 @@ const PropertyDetails = () => {
                         <div className="d-flex flex-column">
                           <span>
                             Total Experiance :{" "}
-                            {projectDetails?.groupDetails?.totalExperience}
+                            {formatNumber(
+                              projectDetails?.groupDetails?.totalExperience
+                            )}
+                            +
                           </span>
                           <span>
                             Total Delivered Project :{" "}
-                            {projectDetails?.groupDetails?.deliveredProject}
+                            {formatNumber(
+                              projectDetails?.groupDetails?.deliveredProject
+                            )}
+                            +
                           </span>
                         </div>
                       </div>
@@ -849,51 +880,68 @@ const PropertyDetails = () => {
                   </div>
 
                   <div className="cardDiv customWidth col-md-6 col-12">
-                    {/* Nav Tabs */}
-                    <ul className="nav nav-tabs" id="bhkTab" role="tablist">
-                      {console.log("groupedbhks", groupedbhks)}
-                      {groupedbhks?.map((conf, i) => (
-                        <li className="nav-item" role="presentation" key={i}>
-                          <button
-                            className={`nav-link ${i === 0 ? "active" : ""}`}
-                            id={`tab-${conf?.bhk}`}
-                            data-bs-toggle="tab"
-                            data-bs-target={`#pane-${conf?.bhk}`}
-                            type="button"
-                            role="tab"
-                            aria-controls={`pane-${conf?.bhk}`}
-                            aria-selected="true"
-                          >
-                            <h6>{conf?.bhk} BHK Sample Video</h6>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
+                    {projectDetails?.overviewTitle &&
+                    projectDetails?.overviewLink ? (
+                      <div className="py-3" key={`yt_overview`}>
+                          <h4>{capitaliseWords(projectDetails?.overviewTitle)}</h4>
+                        <YouTubePlayer url={projectDetails?.overviewLink} />
+                      </div>
+                    ) : (
+                      <>
+                        {/* Nav Tabs */}
+                        <ul className="nav nav-tabs" id="bhkTab" role="tablist">
+                          {groupedbhks?.map((conf, i) => (
+                            <li
+                              className="nav-item"
+                              role="presentation"
+                              key={i}
+                            >
+                              <button
+                                className={`nav-link ${
+                                  i === 0 ? "active" : ""
+                                }`}
+                                id={`tab-${conf?.bhk}`}
+                                data-bs-toggle="tab"
+                                data-bs-target={`#pane-${conf?.bhk}`}
+                                type="button"
+                                role="tab"
+                                aria-controls={`pane-${conf?.bhk}`}
+                                aria-selected="true"
+                              >
+                                <h6>{conf?.bhk} BHK Sample Video</h6>
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
 
-                    {/* Tab Content */}
-                    <div className="tab-content" id="bhkTabContent">
-                      {groupedbhks?.map((configBhk, i) => (
-                        <div
-                          key={i}
-                          className={`tab-pane fade ${
-                            i === 0 ? "show active" : ""
-                          }`}
-                          id={`pane-${configBhk?.bhk}`}
-                          role="tabpanel"
-                          aria-labelledby={`tab-${configBhk?.bhk}`}
-                        >
-                          <div className="py-3" key={`yt_${i}`}>
-                            {configBhk?.items?.[0]?.videoLink ? (
-                              <YouTubePlayer url={configBhk?.items?.[0]?.videoLink} />
-                            ) : (
-                              <div className="text-muted text-center py-4">
-                                No sample video available
+                        {/* Tab Content */}
+                        <div className="tab-content" id="bhkTabContent">
+                          {groupedbhks?.map((configBhk, i) => (
+                            <div
+                              key={i}
+                              className={`tab-pane fade ${
+                                i === 0 ? "show active" : ""
+                              }`}
+                              id={`pane-${configBhk?.bhk}`}
+                              role="tabpanel"
+                              aria-labelledby={`tab-${configBhk?.bhk}`}
+                            >
+                              <div className="py-3" key={`yt_${i}`}>
+                                {configBhk?.items?.[0]?.videoLink ? (
+                                  <YouTubePlayer
+                                    url={configBhk?.items?.[0]?.videoLink}
+                                  />
+                                ) : (
+                                  <div className="text-muted text-center py-4">
+                                    No sample video available
+                                  </div>
+                                )}
                               </div>
-                            )}
-                          </div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1079,9 +1127,13 @@ const PropertyDetails = () => {
                             <div className="d-flex justify-content-between">
                               <span>
                                 By
-                                <span className="group-name mx-2">
-                                  {el?.groupDetails?.groupName}
-                                </span>
+                                <Link
+                                  to={`/builders/${el?.city}/${el?.groupDetails?.groupSlug}`}
+                                >
+                                  <span className="group-name mx-2">
+                                    {el?.groupDetails?.groupName}
+                                  </span>
+                                </Link>
                               </span>
                               <span className="mx-2">
                                 <i className="bi bi-geo-alt me-1"></i>
@@ -1089,25 +1141,27 @@ const PropertyDetails = () => {
                               </span>
                             </div>
                             <div className="d-flex justify-content-between mt-2">
-                              {el?.configuration?.map((conf, i) => {
-                                return (
-                                  <span>
-                                    {conf?.bhk}BHK{" "}
-                                    {el?.configuration?.length > 1 && ","}
-                                  </span>
-                                );
-                              })}
+                              <span className="">
+                                {groupedbhksOnSimilar(el?.configuration)?.map(
+                                  (conf, i) => {
+                                    return (
+                                      <span className="me-1">
+                                        {conf?.bhk}BHK,
+                                      </span>
+                                    );
+                                  }
+                                )}
+                              </span>
 
                               <span className="mx-2">
                                 <i className="bi bi-textarea me-1"></i>
-                                {el?.configuration?.[0]?.reraArea} sqFt
+                                {formatNumber(el?.reraAreaMin)} sqft -{" "}
+                                {formatNumber(el?.reraAreaMax)} sqft
                               </span>
                             </div>
-                            <div className="d-flex justify-content-between mt-2">
-                              <span>
-                                <i className="bi bi-house me-1"></i>
-                                {el?.possesionByDeveloper} Possesion Date
-                              </span>
+                            <div className="d-flex mt-2">
+                              <i className="bi bi-house me-1"></i>
+                              {el?.possesionByDeveloper} Possesion Date
                             </div>
                             <div className="d-flex justify-content-between mt-2">
                               <span>

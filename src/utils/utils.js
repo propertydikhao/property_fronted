@@ -50,7 +50,7 @@ export function formatRupees(num) {
 
 export function formatNumber(num) {
   if (num == null) return "";
-  return num.toString().replace(/\B(?=(\d{2})+(?!\d))/g, ",");
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 export const modalClose = (modalId) => {

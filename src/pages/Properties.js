@@ -240,7 +240,7 @@ const Properties = () => {
       </div>
       <section id="properties" className="properties section">
         <div className="container" data-aos="fade-up" data-aos-delay="100">
-          <div
+          {/* <div
             className="search-bar mb-5"
             data-aos="fade-up"
             data-aos-delay="150"
@@ -319,12 +319,12 @@ const Properties = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {propertiesData?.length > 0 ? (
             <>
               <div
-                className="results-header mb-4"
+                className="results-header my-4"
                 data-aos="fade-up"
                 data-aos-delay="200"
               >
@@ -348,7 +348,6 @@ const Properties = () => {
                 >
                   <div className="row g-4">
                     {propertiesData?.map((property, i) => {
-                      console.log("propery", property);
                       return (
                         <div
                           className="col-lg-4 col-md-6"
@@ -381,9 +380,18 @@ const Properties = () => {
                               <div className="property-details">
                                 <div className="property-header">
                                   <div className="property-price">
-                                    {formatIndianNumber(
-                                      property?.configuration?.[0]?.allInc
-                                    )}
+                                    <span>
+                                      <i className="bi bi-currency-rupee"></i>
+                                      {formatIndianNumber(
+                                        property?.configuration?.[0]?.allInc
+                                      )}{" "}
+                                      - <i className="bi bi-currency-rupee"></i>
+                                      {formatIndianNumber(
+                                        property?.configuration?.[
+                                          property?.configuration?.length - 1
+                                        ]?.allInc
+                                      )}
+                                    </span>
                                   </div>
                                   {/* <div className="property-type">House</div> */}
                                 </div>
@@ -409,8 +417,9 @@ const Properties = () => {
                                   <div className="spec-item">
                                     <i className="bi bi-arrows-angle-expand"></i>
                                     <span>
-                                      {formatNumber(property?.reraAreaMax)} sq
-                                      ft
+                                      {formatNumber(property?.reraAreaMin)} sqft
+                                      - {formatNumber(property?.reraAreaMax)}{" "}
+                                      sqft
                                     </span>
                                   </div>
                                 </div>
@@ -473,301 +482,6 @@ const Properties = () => {
                     })}
                   </div>
                 </div>
-
-                <div className="properties-rows view-rows">
-                  <div className="row g-4">
-                    <div className="col-12">
-                      <div className="property-row-item">
-                        <Link
-                          to="property-details"
-                          className="property-row-link"
-                        >
-                          <div className="row align-items-center">
-                            <div className="col-lg-4">
-                              <div className="property-image-wrapper">
-                                <img
-                                  src="assets/img/real-estate/property-exterior-2.webp"
-                                  alt="Luxury Villa"
-                                  className="img-fluid"
-                                />
-                                <div className="property-status">
-                                  <span className="status-badge featured">
-                                    Featured
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-lg-8">
-                              <div className="property-row-content">
-                                <div className="row align-items-center">
-                                  <div className="col-lg-8">
-                                    <div className="property-info">
-                                      <div className="property-header">
-                                        <h4 className="property-title">
-                                          Luxury Modern Villa with Pool
-                                        </h4>
-                                        <div className="property-type-price">
-                                          <span className="property-type">
-                                            House
-                                          </span>
-                                          <span className="property-price">
-                                            $1,850,000
-                                          </span>
-                                        </div>
-                                      </div>
-                                      <p className="property-address">
-                                        <i className="bi bi-geo-alt"></i>
-                                        3458 Sunset Boulevard, Beverly Hills, CA
-                                        90210
-                                      </p>
-                                      <div className="property-specs">
-                                        <span>
-                                          <i className="bi bi-house-door"></i> 5
-                                          Bed
-                                        </span>
-                                        <span>
-                                          <i className="bi bi-droplet"></i> 4
-                                          Bath
-                                        </span>
-                                        <span>
-                                          <i className="bi bi-arrows-angle-expand"></i>{" "}
-                                          3,400 sq ft
-                                        </span>
-                                      </div>
-                                      <div className="property-agent">
-                                        <img
-                                          src="assets/img/real-estate/agent-2.webp"
-                                          alt="Agent"
-                                          className="agent-avatar"
-                                        />
-                                        <span>
-                                          Jennifer Miller, Prime Realty Group
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="col-lg-4">
-                                    <div className="property-actions">
-                                      <div className="action-buttons">
-                                        <button className="action-btn favorite-btn">
-                                          <i className="bi bi-heart"></i> Save
-                                        </button>
-                                        <button className="action-btn contact-btn">
-                                          <i className="bi bi-telephone"></i>{" "}
-                                          Call
-                                        </button>
-                                        <button className="action-btn gallery-btn">
-                                          <i className="bi bi-images"></i> 14
-                                          Photos
-                                        </button>
-                                      </div>
-                                      <span className="btn btn-primary view-details-btn">
-                                        View Details
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </Link>
-                      </div>
-                    </div>
-
-                    <div className="col-12">
-                      <div className="property-row-item">
-                        <Link
-                          to="property-details"
-                          className="property-row-link"
-                        >
-                          <div className="row align-items-center">
-                            <div className="col-lg-4">
-                              <div className="property-image-wrapper">
-                                <img
-                                  src="assets/img/real-estate/property-interior-1.webp"
-                                  alt="Modern Apartment"
-                                  className="img-fluid"
-                                />
-                                <div className="property-status">
-                                  <span className="status-badge new">New</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-lg-8">
-                              <div className="property-row-content">
-                                <div className="row align-items-center">
-                                  <div className="col-lg-8">
-                                    <div className="property-info">
-                                      <div className="property-header">
-                                        <h4 className="property-title">
-                                          Downtown Modern Penthouse
-                                        </h4>
-                                        <div className="property-type-price">
-                                          <span className="property-type">
-                                            Apartment
-                                          </span>
-                                          <span className="property-price">
-                                            $5,200<small>/month</small>
-                                          </span>
-                                        </div>
-                                      </div>
-                                      <p className="property-address">
-                                        <i className="bi bi-geo-alt"></i>
-                                        1247 Broadway Street, Manhattan, NY
-                                        10001
-                                      </p>
-                                      <div className="property-specs">
-                                        <span>
-                                          <i className="bi bi-house-door"></i> 3
-                                          Bed
-                                        </span>
-                                        <span>
-                                          <i className="bi bi-droplet"></i> 2
-                                          Bath
-                                        </span>
-                                        <span>
-                                          <i className="bi bi-arrows-angle-expand"></i>{" "}
-                                          2,100 sq ft
-                                        </span>
-                                      </div>
-                                      <div className="property-agent">
-                                        <img
-                                          src="assets/img/real-estate/agent-4.webp"
-                                          alt="Agent"
-                                          className="agent-avatar"
-                                        />
-                                        <span>
-                                          Robert Thompson, Urban Living Realty
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="col-lg-4">
-                                    <div className="property-actions">
-                                      <div className="action-buttons">
-                                        <button className="action-btn favorite-btn">
-                                          <i className="bi bi-heart"></i> Save
-                                        </button>
-                                        <button className="action-btn contact-btn">
-                                          <i className="bi bi-telephone"></i>{" "}
-                                          Call
-                                        </button>
-                                        <button className="action-btn gallery-btn">
-                                          <i className="bi bi-images"></i> 9
-                                          Photos
-                                        </button>
-                                      </div>
-                                      <span className="btn btn-primary view-details-btn">
-                                        View Details
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </Link>
-                      </div>
-                    </div>
-
-                    <div className="col-12">
-                      <div className="property-row-item">
-                        <Link
-                          to="property-details"
-                          className="property-row-link"
-                        >
-                          <div className="row align-items-center">
-                            <div className="col-lg-4">
-                              <div className="property-image-wrapper">
-                                <img
-                                  src="assets/img/real-estate/property-exterior-5.webp"
-                                  alt="Family Home"
-                                  className="img-fluid"
-                                />
-                                <div className="property-status">
-                                  <span className="status-badge sale">
-                                    For Sale
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-lg-8">
-                              <div className="property-row-content">
-                                <div className="row align-items-center">
-                                  <div className="col-lg-8">
-                                    <div className="property-info">
-                                      <div className="property-header">
-                                        <h4 className="property-title">
-                                          Charming Family Home with Garden
-                                        </h4>
-                                        <div className="property-type-price">
-                                          <span className="property-type">
-                                            House
-                                          </span>
-                                          <span className="property-price">
-                                            $975,000
-                                          </span>
-                                        </div>
-                                      </div>
-                                      <p className="property-address">
-                                        <i className="bi bi-geo-alt"></i>
-                                        892 Maple Grove Avenue, Austin, TX 73301
-                                      </p>
-                                      <div className="property-specs">
-                                        <span>
-                                          <i className="bi bi-house-door"></i> 4
-                                          Bed
-                                        </span>
-                                        <span>
-                                          <i className="bi bi-droplet"></i> 3
-                                          Bath
-                                        </span>
-                                        <span>
-                                          <i className="bi bi-arrows-angle-expand"></i>{" "}
-                                          2,650 sq ft
-                                        </span>
-                                      </div>
-                                      <div className="property-agent">
-                                        <img
-                                          src="assets/img/real-estate/agent-6.webp"
-                                          alt="Agent"
-                                          className="agent-avatar"
-                                        />
-                                        <span>
-                                          Lisa Anderson, Texas Home Solutions
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="col-lg-4">
-                                    <div className="property-actions">
-                                      <div className="action-buttons">
-                                        <button className="action-btn favorite-btn">
-                                          <i className="bi bi-heart"></i> Save
-                                        </button>
-                                        <button className="action-btn contact-btn">
-                                          <i className="bi bi-telephone"></i>{" "}
-                                          Call
-                                        </button>
-                                        <button className="action-btn gallery-btn">
-                                          <i className="bi bi-images"></i> 11
-                                          Photos
-                                        </button>
-                                      </div>
-                                      <span className="btn btn-primary view-details-btn">
-                                        View Details
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
 
               <nav
@@ -776,15 +490,7 @@ const Properties = () => {
                 data-aos-delay="350"
               >
                 <div className="row justify-content-between align-items-center">
-                  <div className="col-lg-6">
-                    <div className="pagination-info">
-                      <p>
-                        Showing <strong>1-6</strong> of{" "}
-                        <strong>{totalCount}</strong> properties
-                      </p>
-                    </div>
-                  </div>
-                  <div className="col-lg-6">
+                  <div className="col-lg-12 float-end">
                     <ul className="pagination justify-content-lg-end">
                       <li
                         className="page-item"

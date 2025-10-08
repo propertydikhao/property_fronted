@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
 import CountUpAnimation from "../component/CountUp";
 import Input from "../component/Input";
-import Dropdown from "../component/Dropdown";
 import Button from "../component/Button";
 import { useEffect, useRef, useState } from "react";
 import {
   apiFetch,
   capitaliseWords,
   formatIndianNumber,
+  formatNumber,
   modalClose,
   slugGenerate,
 } from "../utils/utils";
@@ -689,80 +689,92 @@ const Home = () => {
           >
             {propertiesData?.length > 0 ? (
               propertiesData?.map((el, i) => {
-                return (
-                  <div className="cardDiv selected-project-div col-lg-6 col-sm-12 d-flex flex-wrap">
-                    <div className="col-lg-4 col-sm-12">
-                      <div className="project-left-img">
-                        <img
-                          src={el?.projectImg?.[0]?.imageInfo?.url}
-                          className="img-fuild"
-                        />
+                if (i < 6) { 
+                  return (
+                    <div className="cardDiv selected-project-div col-lg-6 col-sm-12 d-flex flex-wrap">
+                      <div className="col-lg-4 col-sm-12">
+                        <div className="project-left-img">
+                          <img
+                            src={el?.projectImg?.[0]?.imageInfo?.url}
+                            className="img-fuild"
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <div className="col-lg-8 col-sm-12">
-                      <div className="project-info">
-                        <Link
-                          to={`/properties/property-details/${el?.projectSlug}`}
-                        >
-                          <h4 className="fs-6 fw-bold">{el?.projectName}</h4>
-                        </Link>
-                        <div className="d-flex justify-content-between">
-                          <span>
-                            By
-                            <span className="group-name mx-1">
-                              {el?.groupDetails?.groupName}
+                      <div className="col-lg-8 col-sm-12">
+                        <div className="project-info">
+                          <Link
+                            to={`/properties/property-details/${el?.projectSlug}`}
+                          >
+                            <h4 className="fs-6 fw-bold">{el?.projectName}</h4>
+                          </Link>
+                          <div className="d-flex justify-content-between">
+                            <span>
+                              By
+                              <Link
+                                to={`/builders/${city}/${el?.groupDetails?.[0].groupSlug}`}
+                              >
+                                <span className="group-name mx-1">
+                                  {el?.groupDetails?.[0]?.groupName}
+                                </span>
+                              </Link>
                             </span>
-                          </span>
-                          <span className="mx-2">
-                            <i className="bi bi-geo-alt me-1"></i>
-                            {capitaliseWords(el?.city)}
-                          </span>
-                        </div>
-                        <div className="d-flex flex-wrap justify-content-between gap-2 mt-2">
-                          <div className="d-flex flex-wrap">
-                            {groupedbhks(el?.configuration)?.map((conf, i) => {
-                              return (
-                                <span className="me-1">{conf?.bhk}BHK,</span>
-                              );
-                            })}
+                            <span className="mx-2">
+                              <i className="bi bi-geo-alt me-1"></i>
+                              {capitaliseWords(el?.city)}
+                            </span>
                           </div>
+                          <div className="d-flex flex-wrap justify-content-between gap-2 mt-2">
+                            <div className="d-flex flex-wrap">
+                              {groupedbhks(el?.configuration)?.map(
+                                (conf, i) => {
+                                  return (
+                                    <span className="me-1">
+                                      {conf?.bhk}BHK,
+                                    </span>
+                                  );
+                                }
+                              )}
+                            </div>
 
-                          <span>
-                            <i className="bi bi-textarea me-1"></i>
-                            {el?.reraAreaMin} sqFt - {el?.reraAreaMax} sqFt
-                          </span>
-                        </div>
-                        <div className="d-flex justify-content-between mt-2">
-                          <span>
-                            <i className="bi bi-house me-1"></i>
-                            {el?.possesionByDeveloper} Possesion Date
-                          </span>
-                        </div>
-                        <div className="d-flex justify-content-between mt-2">
-                          <span>
-                            <i className="bi bi-currency-rupee"></i>
-                            {formatIndianNumber(
-                              el?.configuration?.[0]?.allInc
-                            )}{" "}
-                            - <i className="bi bi-currency-rupee"></i>
-                            {formatIndianNumber(
-                              el?.configuration?.[el?.configuration?.length - 1]
-                                ?.allInc
-                            )}
-                          </span>
-                        </div>
-                        <div
-                          className="book-btn"
-                          data-bs-toggle="modal"
-                          data-bs-target="#bookingNowBackdrop"
-                          onClick={() => setSelectPropertyId(el?._id)}
-                        >
-                          <i class="bi bi-telephone mx-1"></i>Book Now
+                            <span>
+                              <i className="bi bi-textarea me-1"></i>
+                              {formatNumber(el?.reraAreaMin)} sqft -{" "}
+                              {formatNumber(el?.reraAreaMax)} sqft
+                            </span>
+                          </div>
+                          <div className="d-flex justify-content-between mt-2">
+                            <span>
+                              <i className="bi bi-house me-1"></i>
+                              {el?.possesionByDeveloper} Possesion Date
+                            </span>
+                          </div>
+                          <div className="d-flex justify-content-between mt-2">
+                            <span>
+                              <i className="bi bi-currency-rupee"></i>
+                              {formatIndianNumber(
+                                el?.configuration?.[0]?.allInc
+                              )}{" "}
+                              - <i className="bi bi-currency-rupee"></i>
+                              {formatIndianNumber(
+                                el?.configuration?.[
+                                  el?.configuration?.length - 1
+                                ]?.allInc
+                              )}
+                            </span>
+                          </div>
+                          <div
+                            className="book-btn"
+                            data-bs-toggle="modal"
+                            data-bs-target="#bookingNowBackdrop"
+                            onClick={() => setSelectPropertyId(el?._id)}
+                          >
+                            <i class="bi bi-telephone mx-1"></i>Book Now
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
+                  );
+                }
               })
             ) : (
               <h4>No Property available for {city}</h4>
