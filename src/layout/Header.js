@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import Input from "../component/Input";
 import Button from "../component/Button";
-import UploadFile from "../component/Fileupload";
 import { useState } from "react";
 import { apiFetch, capitaliseWords, modalClose } from "../utils/utils";
 import Toast from "../component/Toast";
@@ -70,10 +69,6 @@ const Header = () => {
         })
       );
     }
-  };
-
-  const uploadProfile = (event) => {
-    setUserProfile(event.target.files[0]);
   };
 
   const registerUser = async () => {
@@ -560,13 +555,7 @@ const Header = () => {
                   required={true}
                   icon={<i className="bi bi-telephone field-icon"></i>}
                 />
-                <UploadFile
-                  id="user-logo"
-                  title="Upload Logo"
-                  isMultiple={false}
-                  name="user_logo"
-                  onChange={(event) => uploadProfile(event)}
-                />
+                
                 <div onClick={() => registerUser()}>
                   <Button
                     type="submit"
