@@ -111,6 +111,23 @@ const PropertyDetails = () => {
       )
     : [];
 
+  const groupedbhksForYt = projectDetails?.configuration?.length
+    ? Object.values(
+        projectDetails?.configuration?.reduce((acc, item) => {
+          if (item?.videoLink && item.videoLink.trim() !== "") {
+            if (!acc[item.bhk]) {
+              acc[item.bhk] = {
+                bhk: item.bhk,
+                items: [],
+              };
+            }
+            acc[item.bhk].items?.push(item);
+          }
+          return acc;
+        }, {})
+      )
+    : [];
+
   const groupedbhksOnSimilar = (configBhk) => {
     return configBhk.reduce((acc, item) => {
       if (!acc.find((x) => x.bhk === item.bhk)) {
@@ -416,7 +433,23 @@ const PropertyDetails = () => {
                 data-aos="fade-up"
                 data-aos-delay="400"
               >
-                <h3>Property Description</h3>
+                <div className="d-flex justify-content-between">
+                  <h3>Property Description</h3>
+                  {projectDetails?.projectBrochure && (
+                    <Link
+                      to={projectDetails?.projectBrochure?.url}
+                      target="_blank"
+                      style={{ height: "40px" }}
+                    >
+                      <Button
+                        type="button"
+                        icon={<i className="bi bi-download"></i>}
+                        label="Brochure"
+                      />
+                    </Link>
+                  )}
+                </div>
+                <hr />
                 <div
                   dangerouslySetInnerHTML={{
                     __html: projectDetails?.projectDescription,
@@ -573,7 +606,22 @@ const PropertyDetails = () => {
                 data-aos-delay="600"
               >
                 <div className="cardDiv">
-                  <h3>Configuration</h3>
+                  <div className="d-flex justify-content-between">
+                    <h3>Configuration</h3>
+                    {projectDetails?.costSheet && (
+                      <Link
+                        to={projectDetails?.costSheet?.url}
+                        target="_blank"
+                        style={{ height: "40px" }}
+                      >
+                        <Button
+                          type="button"
+                          icon={<i className="bi bi-download"></i>}
+                          label="Cost Sheet"
+                        />
+                      </Link>
+                    )}
+                  </div>
                   <ul
                     className="nav nav-tabs"
                     id="configurationTab"
@@ -873,72 +921,85 @@ const PropertyDetails = () => {
 
                     <div
                       className="mt-3 fw-normal fs-6"
+                      style={{ height: "350px", overflow: "auto" }}
                       dangerouslySetInnerHTML={{
                         __html: projectDetails?.groupDetails?.aboutUs,
                       }}
                     />
+                    <Link
+                      to={`/builders/${projectDetails?.city}/${projectDetails?.groupDetails?.groupSlug}`}
+                      className="btn btn-primary mt-4"
+                    >
+                      View All Projects <i className="bi bi-arrow-up-right"></i>
+                    </Link>
                   </div>
 
                   <div className="cardDiv customWidth col-md-6 col-12">
                     {projectDetails?.overviewTitle &&
                     projectDetails?.overviewLink ? (
                       <div className="py-3" key={`yt_overview`}>
-                          <h4>{capitaliseWords(projectDetails?.overviewTitle)}</h4>
+                        <h4>
+                          {capitaliseWords(projectDetails?.overviewTitle)}
+                        </h4>
                         <YouTubePlayer url={projectDetails?.overviewLink} />
                       </div>
                     ) : (
                       <>
                         {/* Nav Tabs */}
                         <ul className="nav nav-tabs" id="bhkTab" role="tablist">
-                          {groupedbhks?.map((conf, i) => (
-                            <li
-                              className="nav-item"
-                              role="presentation"
-                              key={i}
-                            >
-                              <button
-                                className={`nav-link ${
-                                  i === 0 ? "active" : ""
-                                }`}
-                                id={`tab-${conf?.bhk}`}
-                                data-bs-toggle="tab"
-                                data-bs-target={`#pane-${conf?.bhk}`}
-                                type="button"
-                                role="tab"
-                                aria-controls={`pane-${conf?.bhk}`}
-                                aria-selected="true"
+                          {groupedbhksForYt?.map((conf, i) => {
+                            return (
+                              <li
+                                className="nav-item"
+                                role="presentation"
+                                key={i}
                               >
-                                <h6>{conf?.bhk} BHK Sample Video</h6>
-                              </button>
-                            </li>
-                          ))}
+                                <button
+                                  className={`nav-link ${
+                                    i === 0 ? "active" : ""
+                                  }`}
+                                  id={`tab-${conf?.bhk}`}
+                                  data-bs-toggle="tab"
+                                  data-bs-target={`#pane-${conf?.bhk}`}
+                                  type="button"
+                                  role="tab"
+                                  aria-controls={`pane-${conf?.bhk}`}
+                                  aria-selected="true"
+                                >
+                                  <h6>{conf?.bhk} BHK Sample Video</h6>
+                                </button>
+                              </li>
+                            );
+                          })}
                         </ul>
 
                         {/* Tab Content */}
                         <div className="tab-content" id="bhkTabContent">
-                          {groupedbhks?.map((configBhk, i) => (
-                            <div
-                              key={i}
-                              className={`tab-pane fade ${
-                                i === 0 ? "show active" : ""
-                              }`}
-                              id={`pane-${configBhk?.bhk}`}
-                              role="tabpanel"
-                              aria-labelledby={`tab-${configBhk?.bhk}`}
-                            >
-                              <div className="py-3" key={`yt_${i}`}>
-                                {configBhk?.items?.[0]?.videoLink ? (
-                                  <YouTubePlayer
-                                    url={configBhk?.items?.[0]?.videoLink}
-                                  />
-                                ) : (
-                                  <div className="text-muted text-center py-4">
-                                    No sample video available
-                                  </div>
-                                )}
+                          {groupedbhksForYt?.map((configBhk, i) => {
+                            return (
+                              <div
+                                key={i}
+                                className={`tab-pane fade ${
+                                  i === 0 ? "show active" : ""
+                                }`}
+                                id={`pane-${configBhk?.bhk}`}
+                                role="tabpanel"
+                                aria-labelledby={`tab-${configBhk?.bhk}`}
+                              >
+                                <div className="py-3" key={`yt_${i}`}>
+                                  {configBhk?.items?.[0]?.videoLink ? (
+                                    <YouTubePlayer
+                                      url={configBhk?.items?.[0]?.videoLink}
+                                    />
+                                  ) : (
+                                    <div className="text-muted text-center py-4">
+                                      No sample video available
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       </>
                     )}

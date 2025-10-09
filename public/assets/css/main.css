@@ -961,6 +961,7 @@ h6 {
 }
 
 .search-btn {
+  height: 100%;
   width: 100%;
   background: var(--accent-color);
   color: var(--contrast-color);
