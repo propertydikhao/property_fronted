@@ -101,3 +101,5 @@ export const slugGenerate = (str) => {
     ?.replace(/-+/g, "-") // collapse multiple hyphens
     ?.replace(/^-|-$/g, ""); // trim leading/trailing hyphen
 };
+
+

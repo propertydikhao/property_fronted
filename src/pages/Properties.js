@@ -7,11 +7,14 @@ import {
   formatIndianNumber,
   formatNumber,
   modalClose,
+  slugGenerate,
 } from "../utils/utils";
 import { isToastShow } from "../redux/slice/toastSlice";
 import useDebounce from "../utils/debounce";
 import DateTimePicker from "../component/DateTimePicker";
 import Button from "../component/Button";
+import Input from "../component/Input";
+import Dropdown from "../component/Dropdown";
 
 const Properties = () => {
   const dispatch = useDispatch();
@@ -53,17 +56,18 @@ const Properties = () => {
     }
     setCity(locationSpilt?.[2]);
     onCityChange();
-  }, [activePage, city, suggestionName]);
+  }, [activePage, city, suggestionName, price]);
 
   const onCityChange = async () => {
-    setQuery("");
+    setQuery(suggestionName);
     try {
       let payload = {
         city,
         groupName,
         locality,
         page: activePage,
-        search: suggestionName,
+        search: slugGenerate(suggestionName),
+        price,
       };
       const projectData = await apiFetch(
         "/api/project/getProjectByCity",
@@ -73,6 +77,9 @@ const Properties = () => {
         setPropertiesData(projectData?.results);
         setTotalPages(projectData?.totalPages);
         setTotalCount(projectData?.total);
+        setLocality_builder_data([]);
+      } else {
+        setPropertiesData([]);
         setLocality_builder_data([]);
       }
     } catch (error) {
@@ -90,7 +97,9 @@ const Properties = () => {
     try {
       let payload = {
         city,
-        searchBy,
+        searchBy: slugGenerate(searchBy),
+        locality,
+        groupName
       };
       const projectData = await apiFetch(
         "/api/project/getSuggestionByCity",
@@ -100,13 +109,6 @@ const Properties = () => {
         setLocality_builder_data(projectData?.data);
       } else {
         setLocality_builder_data([]);
-        dispatch(
-          isToastShow({
-            isShow: true,
-            type: "error",
-            message: projectData?.message,
-          })
-        );
       }
     } catch (error) {
       setLocality_builder_data([]);
@@ -234,9 +236,9 @@ const Properties = () => {
           </nav>
         </div>
       </div>
-      <section id="properties" className="properties section">
+      <section id="properties" className="properties section mt-4">
         <div className="container" data-aos="fade-up" data-aos-delay="100">
-          {/* <div
+          <div
             className="search-bar mb-5"
             data-aos="fade-up"
             data-aos-delay="150"
@@ -269,20 +271,24 @@ const Properties = () => {
                         required={false}
                         icon={<i className="bi bi-cursor field-icon"></i>}
                         value={query}
-                        onChange={(e) => setQuery(e.target.value)}
+                        onChange={(e) => {
+                          setQuery(e.target.value);
+                          setIsSuggectionClick(false);
+                        }}
                       />
-                      {locality_builder_data?.length > 0 && (
-                        <div
-                          className={`suggestionDiv ${query ? "visible" : ""}`}
-                        >
+                      <div
+                        className={`suggestionDiv ${query ? "visible" : ""}`}
+                      >
+                        {locality_builder_data?.length > 0 && (
                           <ul>
                             {locality_builder_data?.map((item, i) => {
                               return (
                                 <li
                                   key={i}
-                                  onClick={(e) =>
-                                    setSuggestionName(e.target.innerText)
-                                  }
+                                  onClick={(e) => {
+                                    setSuggestionName(e.target.innerText);
+                                    setIsSuggectionClick(true);
+                                  }}
                                 >
                                   <div>
                                     {" "}
@@ -293,8 +299,8 @@ const Properties = () => {
                               );
                             })}
                           </ul>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
 
                     <div className="col-lg-4 col-md-6">
@@ -315,7 +321,7 @@ const Properties = () => {
                 </div>
               </div>
             </div>
-          </div> */}
+          </div>
 
           {propertiesData?.length > 0 ? (
             <>
