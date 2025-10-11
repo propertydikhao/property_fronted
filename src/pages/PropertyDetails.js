@@ -17,7 +17,6 @@ import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import YouTubePlayer from "../utils/getYoutubeLink";
 import DateTimePicker from "../component/DateTimePicker";
 import Button from "../component/Button";
-import { isLoadingShow } from "../redux/slice/loadingSlice";
 import QRCode from "../component/Qrcode";
 import EmiCalculator from "../component/EmiCalculator";
 
@@ -26,7 +25,6 @@ const PropertyDetails = () => {
   const userState = useSelector((state) => state?.user?.userInfo);
   const [projectDetails, setProjectDetails] = useState("");
   const [similarProject, setSimilarProject] = useState([]);
-  const [projectTour, setProjectTour] = useState("");
   const [previewUnitImg, setPreviewUnitImg] = useState(null);
   const [bookingSlot, setBookingSlot] = useState({
     mode: "",
@@ -142,6 +140,7 @@ const PropertyDetails = () => {
       mode: bookingMode.current,
       data_time: data,
       present_by: bookingMode.current === "online" ? "googlemeet" : "",
+      actionType :"slot booking"
     });
   };
 
@@ -156,7 +155,6 @@ const PropertyDetails = () => {
       );
     }
 
-    dispatch(isLoadingShow({ isShow: true }));
     bookingSlot["projectId"] = projectDetails["_id"];
     bookingSlot["userId"] = userState?._id;
 
@@ -175,6 +173,56 @@ const PropertyDetails = () => {
         );
 
         modalClose("bookingNowBackdrop");
+      } else {
+        dispatch(
+          isToastShow({
+            isShow: true,
+            type: "error",
+            message: requestData?.message,
+          })
+        );
+      }
+    } catch (error) {
+      dispatch(
+        isToastShow({
+          isShow: true,
+          type: "error",
+          message: "something went wrong",
+        })
+      );
+    }
+  };
+
+  const openFileHandler = async (link) => {
+    if (userState == "" || userState == undefined || userState?.isLogin === 0) {
+      return dispatch(
+        isToastShow({
+          isShow: true,
+          type: "success",
+          message: "Before downloading, please login first",
+        })
+      );
+    }
+    // window.open(link, "_blank");
+    
+   
+    try {
+      let payload = {
+        projectId: projectDetails["_id"],
+        userId: userState?._id,
+      };
+      const requestData = await apiFetch(
+        "/api/project/submitRequestForDownloadFile",
+        payload
+      );
+      if (requestData?.success) {
+        dispatch(
+          isToastShow({
+            isShow: true,
+            type: "success",
+            message: requestData?.message,
+          })
+        );
       } else {
         dispatch(
           isToastShow({
@@ -437,8 +485,10 @@ const PropertyDetails = () => {
                   <h3>Property Description</h3>
                   {projectDetails?.projectBrochure && (
                     <Link
-                      to={projectDetails?.projectBrochure?.url}
-                      target="_blank"
+                      to="#"
+                      onClick={() =>
+                        openFileHandler(projectDetails?.projectBrochure?.url)
+                      }
                       style={{ height: "40px" }}
                     >
                       <Button
@@ -610,8 +660,10 @@ const PropertyDetails = () => {
                     <h3>Configuration</h3>
                     {projectDetails?.costSheet && (
                       <Link
-                        to={projectDetails?.costSheet?.url}
-                        target="_blank"
+                        to="#"
+                        onClick={() =>
+                          openFileHandler(projectDetails?.costSheet?.url)
+                        }
                         style={{ height: "40px" }}
                       >
                         <Button

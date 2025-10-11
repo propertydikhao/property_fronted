@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation, useParams } from "react-router-dom";
-import Input from "../component/Input";
+import { Link, useLocation } from "react-router-dom";
 import {
   apiFetch,
   capitaliseWords,
@@ -11,9 +10,7 @@ import {
 } from "../utils/utils";
 import { isToastShow } from "../redux/slice/toastSlice";
 import useDebounce from "../utils/debounce";
-import Dropdown from "../component/Dropdown";
 import DateTimePicker from "../component/DateTimePicker";
-import { isLoadingShow } from "../redux/slice/loadingSlice";
 import Button from "../component/Button";
 
 const Properties = () => {
@@ -184,7 +181,6 @@ const Properties = () => {
       );
     }
 
-    dispatch(isLoadingShow({ isShow: true }));
     bookingSlot["projectId"] = selectPropertyId;
     bookingSlot["userId"] = userState?._id;
 

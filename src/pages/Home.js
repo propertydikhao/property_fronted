@@ -13,7 +13,6 @@ import {
 } from "../utils/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { isToastShow } from "../redux/slice/toastSlice";
-import { isLoadingShow } from "../redux/slice/loadingSlice";
 import DateTimePicker from "../component/DateTimePicker";
 import useDebounce from "../utils/debounce";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -49,7 +48,7 @@ const Home = () => {
   }, [debouncedQuery]);
 
   useEffect(() => {
-    fetchProject();
+    if (city) fetchProject();
   }, [city]);
 
   useEffect(() => {
@@ -72,6 +71,8 @@ const Home = () => {
       );
       if (projectData?.success) {
         setPropertiesData(projectData?.results);
+      } else {
+        setPropertiesData([]);
       }
     } catch (error) {
       dispatch(
@@ -216,7 +217,6 @@ const Home = () => {
       );
     }
 
-    dispatch(isLoadingShow({ isShow: true }));
     bookingSlot["projectId"] = selectPropertyId;
     bookingSlot["userId"] = userState?._id;
 
@@ -266,7 +266,6 @@ const Home = () => {
       );
     }
 
-    dispatch(isLoadingShow({ isShow: true }));
 
     try {
       let payload = {
@@ -382,7 +381,10 @@ const Home = () => {
                       }`}
                       data-bs-toggle="modal"
                       data-bs-target="#citySelectionBackdrop"
-                      onClick={() => setPropertyType("residential")}
+                      onClick={() => {
+                        setPropertyType("residential");
+                        setCity("");
+                      }}
                     >
                       Residential
                     </span>
@@ -394,7 +396,10 @@ const Home = () => {
                       }`}
                       data-bs-toggle="modal"
                       data-bs-target="#citySelectionBackdrop"
-                      onClick={() => setPropertyType("commercial")}
+                      onClick={() => {
+                        setPropertyType("commercial");
+                        setCity("");
+                      }}
                     >
                       Commercial
                     </span>
@@ -420,12 +425,12 @@ const Home = () => {
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                       />
-                      {locality_builder_data?.length > 0 && (
-                        <div
-                          className={`suggestionDiv ${
-                            query ? "visible home-visible" : ""
-                          }`}
-                        >
+                      <div
+                        className={`suggestionDiv ${
+                          query ? "visible home-visible" : ""
+                        }`}
+                      >
+                        {locality_builder_data?.length > 0 ? (
                           <ul>
                             {locality_builder_data?.map((item, i) => {
                               if (
@@ -486,8 +491,12 @@ const Home = () => {
                               }
                             })}
                           </ul>
-                        </div>
-                      )}
+                        ) : (
+                          <div className="fw-normal p-2">
+                            oops!! Sorry no project found
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -689,7 +698,7 @@ const Home = () => {
           >
             {propertiesData?.length > 0 ? (
               propertiesData?.map((el, i) => {
-                if (i < 6) { 
+                if (i < 6) {
                   return (
                     <div className="cardDiv selected-project-div col-lg-6 col-sm-12 d-flex flex-wrap">
                       <div className="col-lg-4 col-sm-12">
@@ -1175,7 +1184,8 @@ const Home = () => {
               <div className="p-10 d-flex justify-content-center flex-wrap gap-5">
                 {cityArr?.map((el, i) => {
                   return (
-                    <div
+                    <Link
+                      to="#"
                       className={`col-3 d-flex flex-column text-center select-city-div ${
                         city === el?.name ? "selected" : ""
                       }`}
@@ -1186,7 +1196,7 @@ const Home = () => {
                         className="img-fuild"
                       />
                       <span>{capitaliseWords(el?.name)}</span>
-                    </div>
+                    </Link>
                   );
                 })}
               </div>

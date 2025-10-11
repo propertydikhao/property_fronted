@@ -3,11 +3,9 @@ import Input from "../component/Input";
 import Button from "../component/Button";
 import { useState } from "react";
 import { apiFetch, capitaliseWords, modalClose } from "../utils/utils";
-import Toast from "../component/Toast";
 import { useDispatch, useSelector } from "react-redux";
 import { isToastShow } from "../redux/slice/toastSlice";
 import { userInfo } from "../redux/slice/userSlice";
-import { isLoadingShow } from "../redux/slice/loadingSlice";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -16,12 +14,10 @@ const Header = () => {
 
   const [fullName, setFullName] = useState("");
   const [mobileNo, setMobileNo] = useState("");
-  const [userProfile, setUserProfile] = useState(null);
   const [otp, setOTP] = useState("");
   const [activeMenu, setActiveMenu] = useState("home");
 
   const verifyOtp = async () => {
-    dispatch(isLoadingShow({ isShow: true }));
 
     try {
       if (mobileNo && otp) {
@@ -72,13 +68,12 @@ const Header = () => {
   };
 
   const registerUser = async () => {
-    dispatch(isLoadingShow({ isShow: true }));
+    
     try {
       if (fullName && mobileNo) {
         const data = new FormData();
         data.append("fullName", fullName);
         data.append("mobileNo", mobileNo);
-        data.append("userProfile", userProfile);
 
         const userData = await apiFetch("/api/user/register", data);
         if (userData?.success) {
@@ -91,9 +86,7 @@ const Header = () => {
           );
           setFullName("");
           setMobileNo("");
-          setUserProfile("");
           modalClose("registerstaticBackdrop");
-          dispatch(isLoadingShow({ isShow: true }));
         } else {
           dispatch(
             isToastShow({
@@ -102,7 +95,6 @@ const Header = () => {
               message: userData?.message,
             })
           );
-          dispatch(isLoadingShow({ isShow: true }));
         }
       } else {
         dispatch(
@@ -254,7 +246,7 @@ const Header = () => {
                       Disclaimer
                     </Link>
                   </li>
-                  
+
                   <li onClick={() => setActiveMenu("services")}>
                     <Link
                       to="/services"
@@ -555,7 +547,7 @@ const Header = () => {
                   required={true}
                   icon={<i className="bi bi-telephone field-icon"></i>}
                 />
-                
+
                 <div onClick={() => registerUser()}>
                   <Button
                     type="submit"

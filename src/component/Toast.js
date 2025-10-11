@@ -31,11 +31,17 @@ const Toast = () => {
 
       modalEl.addEventListener("hidden.bs.modal", handleClose);
 
+       setTimeout(() => {
+         modal.hide();
+       }, 1000);
+
+
       // cleanup
       return () => {
         modalEl.removeEventListener("hidden.bs.modal", handleClose);
       };
-    }
+
+         }
   }, [toastState]);
 
   return (
