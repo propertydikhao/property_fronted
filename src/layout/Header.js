@@ -18,7 +18,6 @@ const Header = () => {
   const [activeMenu, setActiveMenu] = useState("home");
 
   const verifyOtp = async () => {
-
     try {
       if (mobileNo && otp) {
         let payload = {
@@ -68,7 +67,6 @@ const Header = () => {
   };
 
   const registerUser = async () => {
-    
     try {
       if (fullName && mobileNo) {
         const data = new FormData();
@@ -247,14 +245,6 @@ const Header = () => {
                     </Link>
                   </li>
 
-                  <li onClick={() => setActiveMenu("services")}>
-                    <Link
-                      to="/services"
-                      className={activeMenu === "services" ? "active" : ""}
-                    >
-                      Services
-                    </Link>
-                  </li>
                   <li onClick={() => setActiveMenu("blog")}>
                     <Link
                       to="/blog"
@@ -286,9 +276,6 @@ const Header = () => {
                         <i className="bi bi-chevron-down toggle-dropdown"></i>
                       </Link>
                       <ul>
-                        <li>
-                          <Link to="/profile">Profile</Link>
-                        </li>
                         <li>
                           <Link to="/#" onClick={() => logout()}>
                             <div className="d-flex align-items-center">
@@ -395,14 +382,7 @@ const Header = () => {
                     Properties
                   </Link>
                 </li>
-                <li onClick={() => setActiveMenu("services")}>
-                  <Link
-                    to="/services"
-                    className={activeMenu === "services" ? "active" : ""}
-                  >
-                    Services
-                  </Link>
-                </li>
+
                 <li onClick={() => setActiveMenu("blog")}>
                   <Link
                     to="/blog"
@@ -419,10 +399,11 @@ const Header = () => {
                     Contact
                   </Link>
                 </li>
+
                 <hr className="text-black" />
                 {userState?.isLogin ? (
                   <li className="dropdown">
-                    <Link to="/#">
+                    <Link to="#">
                       {!useState?.uploadPath ? (
                         <div className="d-flex align-items-center">
                           <span className="nameAvatar me-2">s</span>
@@ -435,10 +416,7 @@ const Header = () => {
                     </Link>
                     <ul>
                       <li>
-                        <Link to="/profile">Profile</Link>
-                      </li>
-                      <li>
-                        <Link to="/#" onClick={() => logout()}>
+                        <Link to="#" onClick={() => logout()}>
                           <div className="d-flex align-items-center">
                             Logout
                             <i className="bi bi-box-arrow-in-right fs-5 me-1"></i>

@@ -3,10 +3,8 @@ import Layout from "./layout/Index";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import Properties from "./pages/Properties";
-import Services from "./pages/Services";
 import Blog from "./pages/Blog";
 import PropertyDetails from "./pages/PropertyDetails";
-import ServiceDetials from "./pages/ServiceDetails";
 import BlogDetails from "./pages/BlogDetails";
 import Privacy from "./pages/Privacy";
 import Contact from "./pages/Contact";
@@ -29,14 +27,12 @@ function App() {
           <Route path="/properties/:city" element={<Properties />} />
           <Route path="/properties/:city/:locality" element={<Properties />} />
           <Route path="/builders/:city/:groupName" element={<Properties />} />
-          <Route path="/services" element={<Services />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogDetails />} />
           <Route
             path="/properties/property-details/:slug"
             element={<PropertyDetails />}
           />
-          <Route path="/service-details" element={<ServiceDetials />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
         </Route>

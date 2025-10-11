@@ -397,24 +397,24 @@ h6 {
 
 .selected-project-div {
   padding: 10px !important;
-  width: 630px;
-  max-height: 220px;
+  /* width: 630px; */
+  /* max-height: 270px; */
 }
 
 .project-img > img {
-     height: 150px;
-    width: 200px;
-    border-radius: 5px;
-    object-fit: contain;
+  height: 150px;
+  width: 200px;
+  border-radius: 5px;
+  object-fit: contain;
 }
 
-.project-left-img{
-  height: 100%;
+.project-left-img {
+  height: 180px;
 }
 .project-left-img > img {
-    height: 100%;
-    width: 100%;
-    border-radius: 5px;
+  height: 100%;
+  width: 100%;
+  border-radius: 5px;
 }
 
 .project-info {
@@ -479,7 +479,7 @@ h6 {
   margin-top: 15px;
 }
 
-.approve-bank{
+.approve-bank {
   height: 200px;
   width: 300px;
   object-fit: contain;
@@ -5966,7 +5966,7 @@ p {
   color: var(--contrast-color);
 }
 
-.property-details  .customWidth{
+.property-details .customWidth {
   width: 48%;
   height: 48%;
 }
