@@ -5966,11 +5966,6 @@ p {
   color: var(--contrast-color);
 }
 
-.property-details .customWidth {
-  width: 48%;
-  height: 48%;
-}
-
 .agent-header {
   display: flex;
   align-items: flex-start;
@@ -6357,7 +6352,7 @@ p {
   }
 
   .property-details .property-info .pricing-section .main-price {
-    font-size: 36px;
+    font-size: 25px;
   }
 
   .property-details .property-info .quick-stats .stat-grid {

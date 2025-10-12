@@ -140,7 +140,7 @@ const PropertyDetails = () => {
       mode: bookingMode.current,
       data_time: data,
       present_by: bookingMode.current === "online" ? "googlemeet" : "",
-      actionType :"slot booking"
+      actionType: "slot booking",
     });
   };
 
@@ -203,9 +203,7 @@ const PropertyDetails = () => {
         })
       );
     }
-    // window.open(link, "_blank");
     
-   
     try {
       let payload = {
         projectId: projectDetails["_id"],
@@ -216,13 +214,8 @@ const PropertyDetails = () => {
         payload
       );
       if (requestData?.success) {
-        dispatch(
-          isToastShow({
-            isShow: true,
-            type: "success",
-            message: requestData?.message,
-          })
-        );
+        window.open(link, "_blank");
+
       } else {
         dispatch(
           isToastShow({
@@ -264,16 +257,15 @@ const PropertyDetails = () => {
           <div className="row">
             <div className="col-lg-12">
               <div
-                className="property-hero d-flex flex-wrap"
+                className="property-hero row d-flex flex-wrap"
                 data-aos="fade-up"
                 data-aos-delay="200"
               >
-                <div className="col-lg-7">
+                <div className="col-lg-7 col-sm-12">
                   <div className="hero-image-container">
                     <div className="property-gallery-slider">
                       <Swiper
                         modules={[Autoplay, Navigation, Pagination]}
-                        spaceBetween={30}
                         slidesPerView={1}
                         loop={true}
                         autoplay={{
@@ -282,15 +274,18 @@ const PropertyDetails = () => {
                         }}
                         // navigation={true} // 👈 adds arrows
                         pagination={{ clickable: true }} // 👈 adds dots
+                        
                       >
                         {projectDetails?.projectImg?.map((el, i) => {
                           return (
                             <SwiperSlide>
-                              <img
-                                src={el?.imageInfo?.url}
-                                className="img-fluid hero-image"
-                                alt="Property Main Image"
-                              />
+                              <div className="w-100">
+                                <img
+                                  src={el?.imageInfo?.url}
+                                  className="img-fluid hero-image"
+                                  alt="Property Main Image"
+                                />
+                              </div>
                             </SwiperSlide>
                           );
                         })}
@@ -302,9 +297,6 @@ const PropertyDetails = () => {
                           </span>
                         </div>
                       </div>
-
-                      {/* <div className="swiper-button-next"></div>
-                    <div className="swiper-button-prev"></div> */}
                     </div>
                   </div>
                   <div className="property-info p-3">
@@ -321,7 +313,7 @@ const PropertyDetails = () => {
                     </div>
                   </div>
                 </div>
-                <div className="col-lg-5">
+                <div className="col-lg-5 col-sm-12">
                   <div
                     className="actions-card mb-4"
                     data-aos="fade-up"
@@ -336,21 +328,6 @@ const PropertyDetails = () => {
                         <i className="bi bi-calendar-check"></i>
                         Booking Site Visit
                       </button>
-
-                      {/* <div className="row g-2">
-                        <div className="col-6">
-                          <button className="btn btn-outline-primary w-100">
-                            <i className="bi bi-heart"></i>
-                            Save
-                          </button>
-                        </div>
-                        <div className="col-6">
-                          <button className="btn btn-outline-primary w-100">
-                            <i className="bi bi-share"></i>
-                            Share
-                          </button>
-                        </div>
-                      </div> */}
                     </div>
                   </div>
                   <div
@@ -456,22 +433,6 @@ const PropertyDetails = () => {
                         <span className="stat-label">Land Parcel</span>
                       </div>
                     </div>
-                    {/* <div className="stat-card" style={{ width: "300px" }}>
-                      <div className="stat-content">
-                        <span className="stat-number">
-                          {reraData?.length > 0 &&
-                            reraData?.map((el, i) => {
-                              return (
-                                <div>
-                                  <Link to={el?.reraLink}>{el?.reraNo}</Link>
-                                  <i className="bi bi-arrow-up-right mx-1 fs-6"></i>
-                                </div>
-                              );
-                            })}
-                        </span>
-                        <span className="stat-label">Rera No.</span>
-                      </div>
-                    </div> */}
                   </div>
                 </div>
               </div>
@@ -933,128 +894,139 @@ const PropertyDetails = () => {
                 data-aos="fade-up"
                 data-aos-delay="600"
               >
-                <div className="row justify-content-between">
-                  <div className="cardDiv customWidth col-md-6 col-12">
-                    <h3>
-                      About{" "}
-                      {capitaliseWords(projectDetails?.groupDetails?.groupName)}
-                    </h3>
-                    <div className="d-flex ">
-                      <img
-                        src={projectDetails?.groupDetails?.imageInfo?.url}
-                        className="rounded"
-                        height={100}
-                        width={100}
-                      />
-                      <div style={{ padding: "5px 25px" }}>
-                        <h4>
-                          {capitaliseWords(
-                            projectDetails?.groupDetails?.groupName
-                          )}
-                        </h4>
-                        <div className="d-flex flex-column">
-                          <span>
-                            Total Experiance :{" "}
-                            {formatNumber(
-                              projectDetails?.groupDetails?.totalExperience
+                <div className="row g-2">
+                  <div className=" col-md-6 col-sm-12">
+                    <div className="cardDiv">
+                      <h3>
+                        About{" "}
+                        {capitaliseWords(
+                          projectDetails?.groupDetails?.groupName
+                        )}
+                      </h3>
+                      <div className="d-flex ">
+                        <img
+                          src={projectDetails?.groupDetails?.imageInfo?.url}
+                          className="rounded"
+                          height={100}
+                          width={100}
+                        />
+                        <div style={{ padding: "5px 25px" }}>
+                          <h4>
+                            {capitaliseWords(
+                              projectDetails?.groupDetails?.groupName
                             )}
-                            +
-                          </span>
-                          <span>
-                            Total Delivered Project :{" "}
-                            {formatNumber(
-                              projectDetails?.groupDetails?.deliveredProject
-                            )}
-                            +
-                          </span>
+                          </h4>
+                          <div className="d-flex flex-column">
+                            <span>
+                              Total Experiance :{" "}
+                              {formatNumber(
+                                projectDetails?.groupDetails?.totalExperience
+                              )}
+                              +
+                            </span>
+                            <span>
+                              Total Delivered Project :{" "}
+                              {formatNumber(
+                                projectDetails?.groupDetails?.deliveredProject
+                              )}
+                              +
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div
-                      className="mt-3 fw-normal fs-6"
-                      style={{ height: "350px", overflow: "auto" }}
-                      dangerouslySetInnerHTML={{
-                        __html: projectDetails?.groupDetails?.aboutUs,
-                      }}
-                    />
-                    <Link
-                      to={`/builders/${projectDetails?.city}/${projectDetails?.groupDetails?.groupSlug}`}
-                      className="btn btn-primary mt-4"
-                    >
-                      View All Projects <i className="bi bi-arrow-up-right"></i>
-                    </Link>
+                      <div
+                        className="mt-3 fw-normal fs-6"
+                        style={{ height: "350px", overflow: "auto" }}
+                        dangerouslySetInnerHTML={{
+                          __html: projectDetails?.groupDetails?.aboutUs,
+                        }}
+                      />
+                      <Link
+                        to={`/builders/${projectDetails?.city}/${projectDetails?.groupDetails?.groupSlug}`}
+                        className="btn btn-primary mt-4"
+                      >
+                        View All Projects{" "}
+                        <i className="bi bi-arrow-up-right"></i>
+                      </Link>
+                    </div>
                   </div>
 
-                  <div className="cardDiv customWidth col-md-6 col-12">
-                    {projectDetails?.overviewTitle &&
-                    projectDetails?.overviewLink ? (
-                      <div className="py-3" key={`yt_overview`}>
-                        <h4>
-                          {capitaliseWords(projectDetails?.overviewTitle)}
-                        </h4>
-                        <YouTubePlayer url={projectDetails?.overviewLink} />
-                      </div>
-                    ) : (
-                      <>
-                        {/* Nav Tabs */}
-                        <ul className="nav nav-tabs" id="bhkTab" role="tablist">
-                          {groupedbhksForYt?.map((conf, i) => {
-                            return (
-                              <li
-                                className="nav-item"
-                                role="presentation"
-                                key={i}
-                              >
-                                <button
-                                  className={`nav-link ${
-                                    i === 0 ? "active" : ""
-                                  }`}
-                                  id={`tab-${conf?.bhk}`}
-                                  data-bs-toggle="tab"
-                                  data-bs-target={`#pane-${conf?.bhk}`}
-                                  type="button"
-                                  role="tab"
-                                  aria-controls={`pane-${conf?.bhk}`}
-                                  aria-selected="true"
-                                >
-                                  <h6>{conf?.bhk} BHK Sample Video</h6>
-                                </button>
-                              </li>
-                            );
-                          })}
-                        </ul>
-
-                        {/* Tab Content */}
-                        <div className="tab-content" id="bhkTabContent">
-                          {groupedbhksForYt?.map((configBhk, i) => {
-                            return (
-                              <div
-                                key={i}
-                                className={`tab-pane fade ${
-                                  i === 0 ? "show active" : ""
-                                }`}
-                                id={`pane-${configBhk?.bhk}`}
-                                role="tabpanel"
-                                aria-labelledby={`tab-${configBhk?.bhk}`}
-                              >
-                                <div className="py-3" key={`yt_${i}`}>
-                                  {configBhk?.items?.[0]?.videoLink ? (
-                                    <YouTubePlayer
-                                      url={configBhk?.items?.[0]?.videoLink}
-                                    />
-                                  ) : (
-                                    <div className="text-muted text-center py-4">
-                                      No sample video available
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          })}
+                  <div className="col-md-6 col-sm-12">
+                    <div className="cardDiv">
+                      {projectDetails?.overviewTitle &&
+                      projectDetails?.overviewLink ? (
+                        <div className="py-3" key={`yt_overview`}>
+                          <h4>
+                            {capitaliseWords(projectDetails?.overviewTitle)}
+                          </h4>
+                          <YouTubePlayer url={projectDetails?.overviewLink} />
                         </div>
-                      </>
-                    )}
+                      ) : (
+                        <>
+                          {/* Nav Tabs */}
+                          <ul
+                            className="nav nav-tabs"
+                            id="bhkTab"
+                            role="tablist"
+                          >
+                            {groupedbhksForYt?.map((conf, i) => {
+                              return (
+                                <li
+                                  className="nav-item"
+                                  role="presentation"
+                                  key={i}
+                                >
+                                  <button
+                                    className={`nav-link ${
+                                      i === 0 ? "active" : ""
+                                    }`}
+                                    id={`tab-${conf?.bhk}`}
+                                    data-bs-toggle="tab"
+                                    data-bs-target={`#pane-${conf?.bhk}`}
+                                    type="button"
+                                    role="tab"
+                                    aria-controls={`pane-${conf?.bhk}`}
+                                    aria-selected="true"
+                                  >
+                                    <h6>{conf?.bhk} BHK Sample Video</h6>
+                                  </button>
+                                </li>
+                              );
+                            })}
+                          </ul>
+
+                          {/* Tab Content */}
+                          <div className="tab-content" id="bhkTabContent">
+                            {groupedbhksForYt?.map((configBhk, i) => {
+                              return (
+                                <div
+                                  key={i}
+                                  className={`tab-pane fade ${
+                                    i === 0 ? "show active" : ""
+                                  }`}
+                                  id={`pane-${configBhk?.bhk}`}
+                                  role="tabpanel"
+                                  aria-labelledby={`tab-${configBhk?.bhk}`}
+                                >
+                                  <div className="py-3" key={`yt_${i}`}>
+                                    {configBhk?.items?.[0]?.videoLink ? (
+                                      <YouTubePlayer
+                                        url={configBhk?.items?.[0]?.videoLink}
+                                      />
+                                    ) : (
+                                      <div className="text-muted text-center py-4">
+                                        No sample video available
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1087,48 +1059,6 @@ const PropertyDetails = () => {
                 </div>
               </div>
             </div>
-
-            {/* <div className="col-lg-5">
-              <div
-                className="actions-card mb-4"
-                data-aos="fade-up"
-                data-aos-delay="250"
-              >
-                <div className="action-buttons">
-                  <button
-                    className="btn btn-primary btn-lg w-100 mb-3"
-                    data-bs-toggle="modal"
-                    data-bs-target="#bookingNowBackdrop"
-                  >
-                    <i className="bi bi-calendar-check"></i>
-                    Booking Site Visit
-                  </button>
-
-                  <div className="row g-2">
-                    <div className="col-6">
-                      <button className="btn btn-outline-primary w-100">
-                        <i className="bi bi-heart"></i>
-                        Save
-                      </button>
-                    </div>
-                    <div className="col-6">
-                      <button className="btn btn-outline-primary w-100">
-                        <i className="bi bi-share"></i>
-                        Share
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                className="calculator-card mb-4"
-                data-aos="fade-up"
-                data-aos-delay="550"
-              >
-                <h4>EMI Calculator</h4>
-                <EmiCalculator />
-              </div>
-            </div> */}
           </div>
 
           <div className="mt-5" data-aos="fade-up" data-aos-delay="200">
@@ -1215,86 +1145,115 @@ const PropertyDetails = () => {
             <Swiper
               modules={[Autoplay, Navigation, Pagination]}
               slidesPerView={2}
-              loop={false}
+              loop={true}
               autoplay={{
                 delay: 2500, // 2.5 sec
                 disableOnInteraction: false,
               }}
-              // navigation={true} // 👈 optional arrows
+              // navigation={true} // 👈 adds arrows
               pagination={{ clickable: true }} // 👈 adds dots
+              breakpoints={{
+                // when window width is >= 320px
+                320: {
+                  slidesPerView: 1,
+                  spaceBetween: 10,
+                },
+                // when window width is >= 576px
+                576: {
+                  slidesPerView: 2,
+                  spaceBetween: 15,
+                },
+                // when window width is >= 768px
+                768: {
+                  slidesPerView: 2,
+                  spaceBetween: 10,
+                },
+              }}
             >
               {similarProject?.length > 0 &&
                 similarProject?.map((el, i) => {
+                  // if (i < 1) {
                   return (
-                    <SwiperSlide key={i}>
-                      <Link to={`/properties/property-details/${el?._id}`}>
-                        <div className="cardDiv selected-project-div col-lg-6 col-sm-12 d-flex">
-                          <div className="project-img">
-                            <img
-                              src={el?.projectImg?.[0]?.imageInfo?.url}
-                              className="img-fuild"
-                            />
+                    <SwiperSlide>
+                      <div className="col-12">
+                        <div className="cardDiv selected-project-div d-flex flex-wrap">
+                          <div className="col-4">
+                            <div className="project-left-img">
+                              <img
+                                src={el?.projectImg?.[0]?.imageInfo?.url}
+                                className="img-fuild"
+                              />
+                            </div>
                           </div>
-                          <div className="project-info">
-                            <h4>{el?.projectName}</h4>
-                            <div className="d-flex justify-content-between">
-                              <span>
-                                By
-                                <Link
-                                  to={`/builders/${el?.city}/${el?.groupDetails?.groupSlug}`}
-                                >
-                                  <span className="group-name mx-2">
-                                    {el?.groupDetails?.groupName}
-                                  </span>
-                                </Link>
-                              </span>
-                              <span className="mx-2">
-                                <i className="bi bi-geo-alt me-1"></i>
-                                {capitaliseWords(el?.city)}
-                              </span>
-                            </div>
-                            <div className="d-flex justify-content-between mt-2">
-                              <span className="">
-                                {groupedbhksOnSimilar(el?.configuration)?.map(
-                                  (conf, i) => {
-                                    return (
-                                      <span className="me-1">
-                                        {conf?.bhk}BHK,
-                                      </span>
-                                    );
-                                  }
-                                )}
-                              </span>
+                          <div className="col-8">
+                            <div className="project-info">
+                              <Link
+                                to={`/properties/property-details/${el?.projectSlug}`}
+                              >
+                                <h4 className="fs-6 fw-bold">
+                                  {el?.projectName}
+                                </h4>
+                              </Link>
+                              <div className="d-flex justify-content-between">
+                                <span>
+                                  By
+                                  <Link
+                                    to={`/builders/${el?.Autoplaycity}/${el?.groupDetails?.groupSlug}`}
+                                  >
+                                    <span className="group-name mx-1">
+                                      {el?.groupDetails?.groupName}
+                                    </span>
+                                  </Link>
+                                </span>
+                                <span className="mx-2">
+                                  <i className="bi bi-geo-alt me-1"></i>
+                                  {capitaliseWords(el?.city)}
+                                </span>
+                              </div>
+                              <div className="d-flex justify-content-between mt-2">
+                                <span className="">
+                                  {groupedbhksOnSimilar(el?.configuration)?.map(
+                                    (conf, i) => {
+                                      return (
+                                        <span className="me-1">
+                                          {conf?.bhk}BHK,
+                                        </span>
+                                      );
+                                    }
+                                  )}
+                                </span>
 
-                              <span className="mx-2">
-                                <i className="bi bi-textarea me-1"></i>
-                                {formatNumber(el?.reraAreaMin)} sqft -{" "}
-                                {formatNumber(el?.reraAreaMax)} sqft
-                              </span>
-                            </div>
-                            <div className="d-flex mt-2">
-                              <i className="bi bi-house me-1"></i>
-                              {el?.possesionByDeveloper} Possesion Date
-                            </div>
-                            <div className="d-flex justify-content-between mt-2">
-                              <span>
-                                <i className="bi bi-currency-rupee"></i>
-                                {formatIndianNumber(
-                                  el?.configuration?.[0]?.allInc
-                                )}{" "}
-                                - <i className="bi bi-currency-rupee"></i>
-                                {formatIndianNumber(
-                                  el?.configuration?.[
-                                    el?.configuration?.length - 1
-                                  ]?.allInc
-                                )}
-                              </span>
+                                <span className="mx-2">
+                                  <i className="bi bi-textarea me-1"></i>
+                                  {formatNumber(el?.reraAreaMin)} sqft -{" "}
+                                  {formatNumber(el?.reraAreaMax)} sqft
+                                </span>
+                              </div>
+                              <div className="d-flex mt-2">
+                                <i className="bi bi-house me-1"></i>
+                                {el?.possesionByDeveloper} Possesion Date
+                              </div>
+                              <div className="d-flex justify-content-between mt-2">
+                                <span>
+                                  <i className="bi bi-currency-rupee"></i>
+                                  {formatIndianNumber(
+                                    el?.configuration?.[0]?.allInc
+                                  )}{" "}
+                                  - <i className="bi bi-currency-rupee"></i>
+                                  {formatIndianNumber(
+                                    el?.configuration?.[
+                                      el?.configuration?.length - 1
+                                    ]?.allInc
+                                  )}
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </Link>
+                      </div>
                     </SwiperSlide>
                   );
+                  // }
                 })}
             </Swiper>
           </div>
