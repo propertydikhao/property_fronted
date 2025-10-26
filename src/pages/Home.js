@@ -20,12 +20,14 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import YouTubePlayer from "../utils/getYoutubeLink";
 
 const Home = () => {
   const dispatch = useDispatch();
   const userState = useSelector((state) => state?.user?.userInfo);
   const [city, setCity] = useState("mumbai");
   const [propertiesData, setPropertiesData] = useState([]);
+  const [propertiesCount, setPropertiesCount] = useState(0);
   const [services, setServices] = useState([]);
   const [bannerData, setBannerData] = useState([]);
   const [groupData, setGroupData] = useState([]);
@@ -33,6 +35,7 @@ const Home = () => {
   const [selectPropertyId, setSelectPropertyId] = useState("");
   const [locality_builder_data, setLocality_builder_data] = useState([]);
   const [query, setQuery] = useState("");
+  const [reviews, setReviews] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
   const [bookingSlot, setBookingSlot] = useState({
     mode: "",
@@ -56,6 +59,8 @@ const Home = () => {
     fetchBanner();
     fetchGroup();
     fetchService();
+    fetchProjectCount();
+    fetchReviews();
     const handleResize = () => {
       setIsMobile(window.innerWidth < 992); // tablet + mobile only
     };
@@ -102,6 +107,44 @@ const Home = () => {
       const serviceData = await apiFetch("/api/service", payload);
       if (serviceData?.success) {
         setServices(serviceData?.results);
+      }
+    } catch (error) {
+      dispatch(
+        isToastShow({
+          isShow: true,
+          type: "error",
+          message: "something went wrong",
+        })
+      );
+    }
+  };
+
+  const fetchProjectCount = async () => {
+    try {
+      const projectData = await apiFetch("/api/project/getAllProjectCount");
+      if (projectData?.success) {
+        setPropertiesCount(projectData?.result);
+      } else {
+        setPropertiesCount(0);
+      }
+    } catch (error) {
+      dispatch(
+        isToastShow({
+          isShow: true,
+          type: "error",
+          message: "something went wrong",
+        })
+      );
+    }
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const projectData = await apiFetch("/api/review/getAllReviews");
+      if (projectData?.success) {
+        setReviews(projectData?.results);
+      } else {
+        setReviews([]);
       }
     } catch (error) {
       dispatch(
@@ -1077,11 +1120,7 @@ const Home = () => {
                 </div>
               </div>
 
-              <div
-                className="col-lg-6"
-                data-aos="fade-up"
-                data-aos-delay="300"
-              >
+              <div className="col-lg-6" data-aos="fade-up" data-aos-delay="300">
                 <div className="stats-section">
                   <div className="row gy-4">
                     <div className="col-md-6">
@@ -1090,9 +1129,9 @@ const Home = () => {
                           <i className="bi bi-house-door"></i>
                         </div>
                         <div className="stat-number">
-                          <CountUpAnimation end={350} />+
+                          <CountUpAnimation end={propertiesCount} />+
                         </div>
-                        <div className="stat-label">Homes Sold</div>
+                        <div className="stat-label">Total Live Project</div>
                         <p>
                           Successfully closed transactions across all property
                           types and price ranges.
@@ -1154,67 +1193,95 @@ const Home = () => {
           </div>
         </section>
 
-        <section
-          className="call-to-action-1 call-to-action section"
-          id="call-to-action"
-        >
-          <div
-            className="cta-bg"
-            style={{
-              backgroundImage: "url('assets/img/real-estate/showcase-3.webp')",
-            }}
-          ></div>
-          <div className="container" data-aos="fade-up" data-aos-delay="100">
-            <div className="row justify-content-center">
-              <div className="col-xl-6 col-lg-8">
-                <div className="cta-content text-center">
-                  <h2>Need Help Finding Your Dream Property?</h2>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation.
-                  </p>
+        {reviews?.length > 0 && (
+          <section
+            className="call-to-action-1 call-to-action section"
+            id="call-to-action"
+          >
+            <div
+              className="cta-bg"
+              style={{
+                backgroundImage:
+                  "url('assets/img/real-estate/showcase-3.webp')",
+              }}
+            ></div>
+            <div className="container" data-aos="fade-up" data-aos-delay="100">
+              <section
+                id="featured-services"
+                className="featured-services section"
+              >
+                <div
+                  className="container section-title my-4"
+                  data-aos="fade-up"
+                >
+                  <h2>Customer Reviews</h2>
+                </div>
 
-                  <div className="cta-buttons">
-                    <Link to="/contact" className="btn btn-primary">
-                      Contact Us Today
-                    </Link>
-                    <Link to="/contact" className="btn btn-outline">
-                      Schedule a Call
-                    </Link>
-                  </div>
-
-                  <div className="cta-features">
-                    <div
-                      className="feature-item"
-                      data-aos="fade-up"
-                      data-aos-delay="200"
-                    >
-                      <i className="bi bi-telephone-fill"></i>
-                      <span>Free Consultation</span>
-                    </div>
-                    <div
-                      className="feature-item"
-                      data-aos="fade-up"
-                      data-aos-delay="250"
-                    >
-                      <i className="bi bi-clock-fill"></i>
-                      <span>24/7 Support</span>
-                    </div>
-                    <div
-                      className="feature-item"
-                      data-aos="fade-up"
-                      data-aos-delay="300"
-                    >
-                      <i className="bi bi-shield-check-fill"></i>
-                      <span>Trusted Experts</span>
-                    </div>
+                <div
+                  className="container mb-4"
+                  data-aos="fade-up"
+                  data-aos-delay="100"
+                >
+                  <div className="gap-2">
+                    {reviews?.length > 0 && (
+                      <Swiper
+                        modules={[Autoplay, Navigation, Pagination]}
+                        spaceBetween={3}
+                        slidesPerView={4}
+                        loop={true}
+                        autoplay={{
+                          delay: 2500, // 2.5 sec
+                          disableOnInteraction: false,
+                        }}
+                        // navigation={true} // 👈 adds arrows
+                        pagination={{ clickable: true }} // 👈 adds dots
+                        breakpoints={{
+                          // when window width is >= 320px
+                          320: {
+                            slidesPerView: 1,
+                            spaceBetween: 10,
+                          },
+                          // when window width is >= 576px
+                          576: {
+                            slidesPerView: 2,
+                            spaceBetween: 15,
+                          },
+                          // when window width is >= 768px
+                          768: {
+                            slidesPerView: 3,
+                            spaceBetween: 20,
+                          },
+                          // when window width is >= 992px
+                          992: {
+                            slidesPerView: 4,
+                            spaceBetween: 30,
+                          },
+                        }}
+                      >
+                        {reviews?.map((el, i) => {
+                          if (el?.isActive) {
+                            return (
+                              <SwiperSlide>
+                                <div className="cardDiv customer-review-card">
+                                  <div className="project-img">
+                                    <YouTubePlayer
+                                      url={el?.reviewLink}
+                                      height="100%"
+                                    />
+                                  </div>
+                                </div>
+                              </SwiperSlide>
+                            );
+                          }
+                        })}
+                      </Swiper>
+                    )}
                   </div>
                 </div>
-              </div>
+              </section>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         <section id="featured-services" className="featured-services section">
           <div className="container section-title my-4" data-aos="fade-up">

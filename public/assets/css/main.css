@@ -10563,3 +10563,14 @@ p {
   border-radius: 20px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
+
+.customer-review-card{
+  height: 400px;
+  /* width: 300px; */
+}
+
+
+.customer-review-card > .project-img{
+  height: 100%;
+  /* width: 100%; */
+}
