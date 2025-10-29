@@ -25,8 +25,9 @@ const Blog = () => {
       if (projectData?.success) {
         let activeBlogs = [];
         projectData?.results?.map((el, i) => { 
-          if (el?.isActive) { 
-            activeBlogs.push(el)
+          if (el?.isActive) {
+            console.log(el);
+            activeBlogs.push(el);
           }
         })
         setBlogData(activeBlogs);
@@ -73,7 +74,7 @@ const Blog = () => {
           <div className="row gy-4">
             {blogData?.length > 0 &&
               blogData?.map((el, i) => {
-                el?.isActive && (
+                return (
                   <div className="col-lg-4">
                     <article>
                       <div className="post-img">

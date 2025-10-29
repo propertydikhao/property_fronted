@@ -1265,7 +1265,6 @@ const Home = () => {
                         }}
                       >
                         {reviews?.map((el, i) => {
-                          if (el?.isActive) {
                             return (
                               <SwiperSlide>
                                 <div className="cardDiv customer-review-card">
@@ -1278,7 +1277,7 @@ const Home = () => {
                                 </div>
                               </SwiperSlide>
                             );
-                          }
+                          
                         })}
                       </Swiper>
                     )}
