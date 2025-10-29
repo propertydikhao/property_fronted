@@ -11,46 +11,46 @@ const Blog = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [activePage, setActivePage] = useState(1);
 
- 
+  useEffect(() => {
+    fetchBlogs();
+  }, [activePage]);
 
-  useEffect(() => { 
-    fetchBlogs()
-  }, [activePage])
-  
-    const fetchBlogs = async () => {
-      try {
-        let payload = {
-          page: activePage,
-          search: '',
-        };
-        const projectData = await apiFetch(
-          "/api/blog",payload
-        );
-        if (projectData?.success) {
-          setBlogData(projectData?.results);
-          setTotalPages(projectData?.totalPages);
-          setTotalCount(projectData?.count);
-         
-        } else {
-          dispatch(
-            isToastShow({
-              isShow: true,
-              type: "error",
-              message: projectData?.message,
-            })
-          );
-        }
-      } catch (error) {
+  const fetchBlogs = async () => {
+    try {
+      let payload = {
+        page: activePage,
+        search: "",
+      };
+      const projectData = await apiFetch("/api/blog", payload);
+      if (projectData?.success) {
+        let activeBlogs = [];
+        projectData?.results?.map((el, i) => { 
+          if (el?.isActive) { 
+            activeBlogs.push(el)
+          }
+        })
+        setBlogData(activeBlogs);
+        setTotalPages(projectData?.totalPages);
+        setTotalCount(projectData?.count);
+      } else {
         dispatch(
           isToastShow({
             isShow: true,
             type: "error",
-            message: "something went wrong",
+            message: projectData?.message,
           })
         );
       }
-    };
-  
+    } catch (error) {
+      dispatch(
+        isToastShow({
+          isShow: true,
+          type: "error",
+          message: "something went wrong",
+        })
+      );
+    }
+  };
 
   return (
     <main className="main">
@@ -73,7 +73,7 @@ const Blog = () => {
           <div className="row gy-4">
             {blogData?.length > 0 &&
               blogData?.map((el, i) => {
-                return (
+                el?.isActive && (
                   <div className="col-lg-4">
                     <article>
                       <div className="post-img">
@@ -103,58 +103,60 @@ const Blog = () => {
                 );
               })}
           </div>
-          <nav
-            className="pagination-wrapper mt-5"
-            data-aos="fade-up"
-            data-aos-delay="350"
-          >
-            <div className="row justify-content-between align-items-center">
-              <div className="col-lg-6">
-                <div className="pagination-info">
-                  <p>
-                    Showing <strong>1-6</strong> of{" "}
-                    <strong>{totalCount}</strong> Blogs
-                  </p>
+          {blogData?.length > 0 && (
+            <nav
+              className="pagination-wrapper mt-5"
+              data-aos="fade-up"
+              data-aos-delay="350"
+            >
+              <div className="row justify-content-between align-items-center">
+                <div className="col-lg-6">
+                  <div className="pagination-info">
+                    <p>
+                      Showing <strong>1-6</strong> of{" "}
+                      <strong>{totalCount}</strong> Blogs
+                    </p>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <ul className="pagination justify-content-lg-end">
+                    <li
+                      className="page-item"
+                      onClick={() => setActivePage(activePage - 1)}
+                    >
+                      <Link className="page-link" to="#">
+                        <i className="bi bi-chevron-left"></i>
+                      </Link>
+                    </li>
+
+                    {Array.from({ length: totatPages }, (_, i) => {
+                      const pageNumber = i + 1; // pages start from 1
+                      return (
+                        <li
+                          className={`page-item  ${i} ${
+                            activePage === pageNumber ? "active" : ""
+                          }`}
+                          onClick={() => setActivePage(pageNumber)}
+                        >
+                          <Link className="page-link" to="#">
+                            {i + 1}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                    <li
+                      className="page-item"
+                      onClick={() => setActivePage(activePage + 1)}
+                    >
+                      <Link className="page-link" to="#">
+                        <i className="bi bi-chevron-right"></i>
+                      </Link>
+                    </li>
+                  </ul>
                 </div>
               </div>
-              <div className="col-lg-6">
-                <ul className="pagination justify-content-lg-end">
-                  <li
-                    className="page-item"
-                    onClick={() => setActivePage(activePage - 1)}
-                  >
-                    <Link className="page-link" to="#">
-                      <i className="bi bi-chevron-left"></i>
-                    </Link>
-                  </li>
-
-                  {Array.from({ length: totatPages }, (_, i) => {
-                    const pageNumber = i + 1; // pages start from 1
-                    return (
-                      <li
-                        className={`page-item  ${i} ${
-                          activePage === pageNumber ? "active" : ""
-                        }`}
-                        onClick={() => setActivePage(pageNumber)}
-                      >
-                        <Link className="page-link" to="#">
-                          {i + 1}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                  <li
-                    className="page-item"
-                    onClick={() => setActivePage(activePage + 1)}
-                  >
-                    <Link className="page-link" to="#">
-                      <i className="bi bi-chevron-right"></i>
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </nav>
+            </nav>
+          )}
         </div>
       </section>
     </main>
