@@ -142,7 +142,13 @@ const Home = () => {
     try {
       const projectData = await apiFetch("/api/review/getAllReviews");
       if (projectData?.success) {
-        setReviews(projectData?.results);
+        let customerReview = [];
+        projectData?.results?.map((el, i) => {
+          if (el?.isActive) {
+            customerReview.push(el);
+          }
+        });
+        setReviews(customerReview);
       } else {
         setReviews([]);
       }
