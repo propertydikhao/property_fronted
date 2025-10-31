@@ -140,7 +140,7 @@ const Home = () => {
 
   const fetchReviews = async () => {
     try {
-      const projectData = await apiFetch("/api/review/getAllReviews");
+      const projectData = await apiFetch("/api/review");
       if (projectData?.success) {
         let customerReview = [];
         projectData?.results?.map((el, i) => {
