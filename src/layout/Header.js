@@ -14,7 +14,8 @@ const Header = () => {
 
   const [fullName, setFullName] = useState("");
   const [mobileNo, setMobileNo] = useState("");
-  const [otp, setOTP] = useState("");
+  const [otp, setOTP] = useState(null);
+  const [showOtp, setShowOtp] = useState(false);
   const [activeMenu, setActiveMenu] = useState("home");
 
   const verifyOtp = async () => {
@@ -66,14 +67,60 @@ const Header = () => {
     }
   };
 
+  const getOtp = async () => {
+    try {
+      if (mobileNo && mobileNo?.length == 10) {
+        let payload = {
+          mobileNo,
+        };
+        const userData = await apiFetch("/api/user/getOtp", payload);
+        if (userData?.success) {
+          dispatch(
+            isToastShow({
+              isShow: true,
+              type: "success",
+              message: userData?.message,
+            })
+          );
+          setShowOtp(true)
+        } else {
+          dispatch(
+            isToastShow({
+              isShow: true,
+              type: "error",
+              message: userData?.message,
+            })
+          );
+        }
+      } else {
+        dispatch(
+          isToastShow({
+            isShow: true,
+            type: "error",
+            message: "Mobile Should be 10 digits only",
+          })
+        );
+      }
+    } catch (error) {
+      dispatch(
+        isToastShow({
+          isShow: true,
+          type: "error",
+          message: "something went wrong",
+        })
+      );
+    }
+  };
+
   const registerUser = async () => {
     try {
-      if (fullName && mobileNo) {
-        const data = new FormData();
-        data.append("fullName", fullName);
-        data.append("mobileNo", mobileNo);
+      if (fullName && mobileNo && mobileNo?.length===10) {
+        let payload = {
+          fullName,
+          mobileNo,
+        };
 
-        const userData = await apiFetch("/api/user/register", data);
+        const userData = await apiFetch("/api/user/register", payload);
         if (userData?.success) {
           dispatch(
             isToastShow({
@@ -99,7 +146,7 @@ const Header = () => {
           isToastShow({
             isShow: true,
             type: "error",
-            message: "Please Enter Fullname, Mobile",
+            message: "Please Enter Fullname, Valid Mobile No.",
           })
         );
       }
@@ -577,31 +624,37 @@ const Header = () => {
                   onChange={(e) => setMobileNo(e.target.value)}
                 />
 
-                <Button
-                  type="#"
-                  label="GET OTP"
-                  icon={<i className="bi bi-key me-2"></i>}
-                />
-
-                <Input
-                  label={"OTP"}
-                  id="otp"
-                  type="password"
-                  name="otp"
-                  placeholder="*****"
-                  required={true}
-                  icon={<i className="bi bi-shield-lock field-icon"></i>}
-                  value={otp}
-                  onChange={(e) => setOTP(e.target.value)}
-                />
-
-                <div onClick={() => verifyOtp()}>
-                  <Button
-                    type="#"
-                    label="Verify OTP"
-                    icon={<i className="bi bi-key me-2"></i>}
-                  />
-                </div>
+                {showOtp === false && (
+                  <div onClick={() => getOtp()}>
+                    <Button
+                      type="submit"
+                      label="GET OTP"
+                      icon={<i className="bi bi-key me-2"></i>}
+                    />
+                  </div>
+                )}
+                {showOtp && (
+                  <>
+                    <Input
+                      label={"OTP"}
+                      id="otp"
+                      type="password"
+                      name="otp"
+                      placeholder="****"
+                      required={true}
+                      icon={<i className="bi bi-shield-lock field-icon"></i>}
+                      value={otp}
+                      onChange={(e) => setOTP(e.target.value)}
+                    />
+                    <div onClick={() => verifyOtp()}>
+                      <Button
+                        type="#"
+                        label="Verify OTP"
+                        icon={<i className="bi bi-key me-2"></i>}
+                      />
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
