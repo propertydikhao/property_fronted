@@ -38,6 +38,9 @@ const Header = () => {
           setMobileNo("");
           setOTP("");
           modalClose("loginstaticBackdrop");
+          setTimeout(() => {
+            window.location.reload();
+          }, 100);
         } else {
           dispatch(
             isToastShow({

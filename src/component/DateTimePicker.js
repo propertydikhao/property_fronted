@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 
-function DateTimePicker({ label,onChange }) {
+function DateTimePicker({ label, onChange }) {
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ function DateTimePicker({ label,onChange }) {
 
   return (
     <div className="p-4">
-          <h5 className="text-sm font-bold mb-2">{ label}</h5>
+      <h5 className="text-sm font-bold mb-2">{label}</h5>
       <input
         ref={inputRef}
         type="text"

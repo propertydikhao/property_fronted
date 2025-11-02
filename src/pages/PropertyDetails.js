@@ -138,7 +138,7 @@ const PropertyDetails = () => {
   const onChangeHandler = (data) => {
     setBookingSlot({
       mode: bookingMode.current,
-      data_time: data,
+      date_time: data,
       present_by: bookingMode.current === "online" ? "googlemeet" : "",
       actionType: "slot booking",
     });
@@ -203,7 +203,7 @@ const PropertyDetails = () => {
         })
       );
     }
-    
+
     try {
       let payload = {
         projectId: projectDetails["_id"],
@@ -215,7 +215,6 @@ const PropertyDetails = () => {
       );
       if (requestData?.success) {
         window.open(link, "_blank");
-
       } else {
         dispatch(
           isToastShow({
@@ -274,7 +273,6 @@ const PropertyDetails = () => {
                         }}
                         // navigation={true} // 👈 adds arrows
                         pagination={{ clickable: true }} // 👈 adds dots
-                        
                       >
                         {projectDetails?.projectImg?.map((el, i) => {
                           return (
@@ -1387,7 +1385,7 @@ const PropertyDetails = () => {
                           className="form-check-input"
                           type="checkbox"
                           name="googleMeet"
-                          checked="true"
+                          checked={true}
                           id="googleMeet1"
                         />
                         <label

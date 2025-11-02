@@ -99,7 +99,7 @@ const Properties = () => {
         city,
         searchBy: slugGenerate(searchBy),
         locality,
-        groupName
+        groupName,
       };
       const projectData = await apiFetch(
         "/api/project/getSuggestionByCity",
@@ -167,7 +167,7 @@ const Properties = () => {
   const onChangeHandler = (data) => {
     setBookingSlot({
       mode: bookingMode.current,
-      data_time: data,
+      date_time: data,
       present_by: bookingMode.current === "online" ? "googlemeet" : "",
     });
   };
@@ -475,7 +475,7 @@ const Properties = () => {
                                   setSelectPropertyId(property?._id)
                                 }
                               >
-                                <i class="bi bi-telephone mx-1"></i>Book Now
+                                <i className="bi bi-telephone mx-1"></i>Book Now
                               </div>
                             </div>
                           </div>
@@ -631,7 +631,7 @@ const Properties = () => {
                           className="form-check-input"
                           type="checkbox"
                           name="googleMeet"
-                          checked="true"
+                          checked={true}
                           id="googleMeet1"
                         />
                         <label

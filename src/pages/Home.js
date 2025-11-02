@@ -143,11 +143,12 @@ const Home = () => {
       const projectData = await apiFetch("/api/review");
       if (projectData?.success) {
         let customerReview = [];
-        projectData?.results?.map((el, i) => {
+        projectData?.results.forEach(el => {
           if (el?.isActive) {
             customerReview.push(el);
           }
         });
+       
         setReviews(customerReview);
       } else {
         setReviews([]);
@@ -459,7 +460,7 @@ const Home = () => {
                       id="visible-addon"
                     >
                       <span>
-                        <i class="bi bi-geo-alt mx-1 mt-1"></i>
+                        <i className="bi bi-geo-alt mx-1 mt-1"></i>
                         {capitaliseWords(city)}
                       </span>
                     </div>
@@ -741,7 +742,7 @@ const Home = () => {
                     propertiesData?.map((el, i) => {
                       if (i < 6) {
                         return (
-                          <div className="col-lg-6 col-sm-12">
+                          <div className="col-lg-6 col-sm-12" key={i}>
                             <div className="cardDiv selected-project-div d-flex flex-wrap">
                               <div className="col-lg-4 col-sm-12">
                                 <div className="project-left-img">
@@ -781,7 +782,7 @@ const Home = () => {
                                       {groupedbhks(el?.configuration)?.map(
                                         (conf, i) => {
                                           return (
-                                            <span className="me-1">
+                                            <span className="me-1" key={i}>
                                               {conf?.bhk}BHK,
                                             </span>
                                           );
@@ -821,7 +822,8 @@ const Home = () => {
                                     data-bs-target="#bookingNowBackdrop"
                                     onClick={() => setSelectPropertyId(el?._id)}
                                   >
-                                    <i class="bi bi-telephone mx-1"></i>Book Now
+                                    <i className="bi bi-telephone mx-1"></i>Book
+                                    Now
                                   </div>
                                 </div>
                               </div>
@@ -868,7 +870,7 @@ const Home = () => {
                     propertiesData?.map((el, i) => {
                       if (i < 4) {
                         return (
-                          <SwiperSlide>
+                          <SwiperSlide key={i}>
                             <div className="col-lg-6 col-sm-12">
                               <div className="cardDiv selected-project-div d-flex flex-wrap">
                                 <div className="col-12">
@@ -909,7 +911,7 @@ const Home = () => {
                                         {groupedbhks(el?.configuration)?.map(
                                           (conf, i) => {
                                             return (
-                                              <span className="me-1">
+                                              <span className="me-1" key={i}>
                                                 {conf?.bhk}BHK,
                                               </span>
                                             );
@@ -953,8 +955,8 @@ const Home = () => {
                                         setSelectPropertyId(el?._id)
                                       }
                                     >
-                                      <i class="bi bi-telephone mx-1"></i>Book
-                                      Now
+                                      <i className="bi bi-telephone mx-1"></i>
+                                      Book Now
                                     </div>
                                   </div>
                                 </div>
@@ -1265,19 +1267,18 @@ const Home = () => {
                         }}
                       >
                         {reviews?.map((el, i) => {
-                            return (
-                              <SwiperSlide>
-                                <div className="cardDiv customer-review-card">
-                                  <div className="project-img">
-                                    <YouTubePlayer
-                                      url={el?.reviewLink}
-                                      height="100%"
-                                    />
-                                  </div>
+                          return (
+                            <SwiperSlide key={i}>
+                              <div className="cardDiv customer-review-card">
+                                <div className="project-img">
+                                  <YouTubePlayer
+                                    url={el?.reviewLink}
+                                    height="100%"
+                                  />
                                 </div>
-                              </SwiperSlide>
-                            );
-                          
+                              </div>
+                            </SwiperSlide>
+                          );
                         })}
                       </Swiper>
                     )}
@@ -1336,7 +1337,7 @@ const Home = () => {
                 >
                   {groupData?.map((el, i) => {
                     return (
-                      <SwiperSlide>
+                      <SwiperSlide key={i}>
                         <div className="cardDiv selected-builder-div col-sm-6 col-md-4 col-lg-4">
                           <div className="project-img">
                             <img
@@ -1398,6 +1399,7 @@ const Home = () => {
                   return (
                     <Link
                       to="#"
+                      key={i}
                       className={`col-3 d-flex flex-column text-center select-city-div ${
                         city === el?.name ? "selected" : ""
                       }`}
@@ -1511,7 +1513,7 @@ const Home = () => {
                           className="form-check-input"
                           type="checkbox"
                           name="googleMeet"
-                          checked="true"
+                          checked={true}
                           id="googleMeet1"
                         />
                         <label
