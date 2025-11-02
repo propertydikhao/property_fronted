@@ -25,6 +25,8 @@ const Properties = () => {
   const [city, setCity] = useState("");
   const [query, setQuery] = useState("");
   const [price, setPrice] = useState("");
+  const [bhk, setBhk] = useState("");
+  const [paymentSchemeId, setPaymentSchemeId] = useState("");
   const [propertiesData, setPropertiesData] = useState([]);
   const [isSuggectionClick, setIsSuggectionClick] = useState(false);
   const [suggestionName, setSuggestionName] = useState("");
@@ -40,6 +42,21 @@ const Properties = () => {
   });
   let bookingMode = useRef("offline");
   const debouncedQuery = useDebounce(query, 250);
+  let bhkArr = [
+    {
+      label: "Select BHK",
+      value: "",
+    }
+  ];
+  const [bhkArrState, setBhkArrState] = useState(null);
+  let paymentSchemeArr = [
+    {
+      label: "Select Payment Scheme",
+      value: "",
+    },
+  ];
+  const [paymentSchemeArrState, setPaymentSchemeArrState] = useState(null);
+
 
   useEffect(() => {
     if (debouncedQuery && isSuggectionClick == false) {
@@ -56,7 +73,47 @@ const Properties = () => {
     }
     setCity(locationSpilt?.[2]);
     onCityChange();
-  }, [activePage, city, suggestionName, price]);
+  }, [activePage, city, suggestionName, price, bhk, paymentSchemeId]);
+
+  useEffect(() => {
+    const filter = async () => {
+      try {
+        const filterData = await apiFetch("/api/project/filter");
+        if (filterData?.success) {
+          // bhks
+          filterData?.bhks.forEach((bhk) => {
+            bhkArr.push({
+              label: bhk?.bhk,
+              value: bhk?.bhk,
+            });
+          });
+          setBhkArrState(bhkArr)
+
+          // paymentScheme
+          filterData?.paymentSchemes.forEach((paymentScheme) => {
+            paymentSchemeArr.push({
+              label: paymentScheme?.scheme,
+              value: paymentScheme?._id,
+            });
+          });
+          setPaymentSchemeArrState(paymentSchemeArr);
+        } else {
+        }
+      } catch (error) {
+        dispatch(
+          isToastShow({
+            isShow: true,
+            type: "error",
+            message: "something went wrong ff",
+          })
+        );
+      }
+    };
+
+    filter();
+  }, []);
+
+
 
   const onCityChange = async () => {
     setQuery(suggestionName);
@@ -68,6 +125,8 @@ const Properties = () => {
         page: activePage,
         search: slugGenerate(suggestionName),
         price,
+        bhk,
+        paymentSchemeId,
       };
       const projectData = await apiFetch(
         "/api/project/getProjectByCity",
@@ -164,6 +223,7 @@ const Properties = () => {
     },
   ];
 
+
   const onChangeHandler = (data) => {
     setBookingSlot({
       mode: bookingMode.current,
@@ -244,7 +304,7 @@ const Properties = () => {
             data-aos-delay="150"
           >
             <div className="row justify-content-center">
-              <div className="col-lg-10">
+              <div className="col-lg-12">
                 <div className="search-wrapper">
                   <div className="row g-3">
                     <div className="col-lg-4 col-md-4">
@@ -315,6 +375,35 @@ const Properties = () => {
                           <i className="bi bi-currency-rupee me-1 field-icon"></i>
                         }
                         onChange={(e) => setPrice(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="col-lg-4 col-md-6">
+                      <Dropdown
+                        label="BHk"
+                        id="bhk"
+                        name="bhk"
+                        required={false}
+                        option={bhkArrState}
+                        value={bhk}
+                        icon={
+                          <i className="bi bi-house-gear me-1 field-icon"></i>
+                        }
+                        onChange={(e) => setBhk(e.target.value)}
+                      />
+                    </div>
+                    <div className="col-lg-4 col-md-6">
+                      <Dropdown
+                        label="Payment Scheme"
+                        id="paymentScheme"
+                        name="paymentScheme"
+                        required={false}
+                        option={paymentSchemeArrState}
+                        value={paymentSchemeId}
+                        icon={
+                          <i className="bi bi-house-gear me-1 field-icon"></i>
+                        }
+                        onChange={(e) => setPaymentSchemeId(e.target.value)}
                       />
                     </div>
                   </div>
