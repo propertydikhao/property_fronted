@@ -11,6 +11,12 @@ function getYouTubeId(url) {
 
     // Case 2: youtube.com/watch?v=...
     if (urlObj.hostname.includes("youtube.com")) {
+      // Handle Shorts: /shorts/{id}
+      if (urlObj.pathname.startsWith("/shorts/")) {
+        return urlObj.pathname.split("/shorts/")[1].split("/")[0];
+      }
+
+      // Handle normal videos: /watch?v={id}
       return urlObj.searchParams.get("v");
     }
 

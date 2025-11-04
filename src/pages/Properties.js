@@ -210,16 +210,28 @@ const Properties = () => {
       value: "",
     },
     {
-      label: "60lac to 1cr",
-      value: "60lac to 1cr",
+      label: "20lacs to 40lacs",
+      value: "20lacs to 40lacs",
     },
     {
-      label: "1.5cr to 2cr",
-      value: "1.5cr to 2cr",
+      label: "41lacs to 70lacs",
+      value: "41lacs to 70lacs",
     },
     {
-      label: "+2cr",
-      value: "+2cr",
+      label: "71lacs to 1cr",
+      value: "71lacs to 1cr",
+    },
+    {
+      label: "1cr to 1.20cr",
+      value: "1cr to 1.20cr",
+    },
+    {
+      label: "1.20cr to 1.50cr",
+      value: "1.20cr to 1.50cr",
+    },
+    {
+      label: "Greater then 1.50cr",
+      value: "Greater then 1.50cr",
     },
   ];
 

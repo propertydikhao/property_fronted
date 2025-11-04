@@ -371,6 +371,10 @@ const PropertyDetails = () => {
                       Possesion Date (By Rera) :{" "}
                       {projectDetails?.possesionByRera}
                     </span>
+                    <span className="available">
+                      Builder Name :{" "}
+                      {capitaliseWords(projectDetails?.builderName)}
+                    </span>
                   </div>
                 </div>
 
