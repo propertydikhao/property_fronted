@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   apiFetch,
   capitaliseWords,
@@ -19,6 +19,7 @@ import Dropdown from "../component/Dropdown";
 const Properties = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
   const userState = useSelector((state) => state?.user?.userInfo);
   const [locality, setLocality] = useState("");
   const [groupName, setGroupName] = useState("");
@@ -42,21 +43,10 @@ const Properties = () => {
   });
   let bookingMode = useRef("offline");
   const debouncedQuery = useDebounce(query, 250);
-  let bhkArr = [
-    {
-      label: "Select BHK",
-      value: "",
-    }
-  ];
-  const [bhkArrState, setBhkArrState] = useState(null);
-  let paymentSchemeArr = [
-    {
-      label: "Select Payment Scheme",
-      value: "",
-    },
-  ];
-  const [paymentSchemeArrState, setPaymentSchemeArrState] = useState(null);
 
+  const [bhkArrState, setBhkArrState] = useState([]);
+
+  const [paymentSchemeArrState, setPaymentSchemeArrState] = useState([]);
 
   useEffect(() => {
     if (debouncedQuery && isSuggectionClick == false) {
@@ -65,46 +55,49 @@ const Properties = () => {
   }, [debouncedQuery]);
 
   useEffect(() => {
-    let locationSpilt = location?.pathname?.split("/");
-    if (locationSpilt?.[1] === "properties") {
-      setLocality(locationSpilt?.[3]);
+    const parts = location.pathname.split("/");
+    const newCity = parts[2] || "";
+    const newLocality = parts[3] || "";
+
+    setCity(newCity);
+
+    if (parts[1] === "properties") {
+      setLocality(newLocality);
+      setGroupName("");
     } else {
-      setGroupName(locationSpilt?.[3]);
+      setGroupName(newLocality);
+      setLocality("");
     }
-    setCity(locationSpilt?.[2]);
+  }, [location.pathname]);
+
+  useEffect(() => {
     onCityChange();
-  }, [activePage, city, suggestionName, price, bhk, paymentSchemeId]);
+  }, [city, locality, suggestionName, price, bhk, paymentSchemeId, activePage]);
 
   useEffect(() => {
     const filter = async () => {
       try {
         const filterData = await apiFetch("/api/project/filter");
         if (filterData?.success) {
-          // bhks
-          filterData?.bhks.forEach((bhk) => {
-            bhkArr.push({
-              label: bhk?.bhk,
-              value: bhk?.bhk,
-            });
-          });
-          setBhkArrState(bhkArr)
+          setBhkArrState([
+            { label: "Select BHK", value: "" },
+            ...filterData.bhks.map((b) => ({ label: b.bhk, value: b.bhk })),
+          ]);
 
-          // paymentScheme
-          filterData?.paymentSchemes.forEach((paymentScheme) => {
-            paymentSchemeArr.push({
-              label: paymentScheme?.scheme,
-              value: paymentScheme?._id,
-            });
-          });
-          setPaymentSchemeArrState(paymentSchemeArr);
-        } else {
+          setPaymentSchemeArrState([
+            { label: "Select Payment Scheme", value: "" },
+            ...filterData.paymentSchemes.map((p) => ({
+              label: p.scheme,
+              value: p._id,
+            })),
+          ]);
         }
-      } catch (error) {
+      } catch {
         dispatch(
           isToastShow({
             isShow: true,
             type: "error",
-            message: "something went wrong ff",
+            message: "Something went wrong",
           })
         );
       }
@@ -113,42 +106,42 @@ const Properties = () => {
     filter();
   }, []);
 
-
-
   const onCityChange = async () => {
     setQuery(suggestionName);
-    try {
-      let payload = {
-        city,
-        groupName,
-        locality,
-        page: activePage,
-        search: slugGenerate(suggestionName),
-        price,
-        bhk,
-        paymentSchemeId,
-      };
-      const projectData = await apiFetch(
-        "/api/project/getProjectByCity",
-        payload
-      );
-      if (projectData?.success) {
-        setPropertiesData(projectData?.results);
-        setTotalPages(projectData?.totalPages);
-        setTotalCount(projectData?.total);
-        setLocality_builder_data([]);
-      } else {
-        setPropertiesData([]);
-        setLocality_builder_data([]);
+    if (city) { 
+      try {
+        let payload = {
+          city,
+          groupName,
+          locality,
+          page: activePage,
+          search: slugGenerate(suggestionName),
+          price,
+          bhk,
+          paymentSchemeId,
+        };
+        const projectData = await apiFetch(
+          "/api/project/getProjectByCity",
+          payload
+        );
+        if (projectData?.success) {
+          setPropertiesData(projectData?.results);
+          setTotalPages(projectData?.totalPages);
+          setTotalCount(projectData?.total);
+          setLocality_builder_data([]);
+        } else {
+          setPropertiesData([]);
+          setLocality_builder_data([]);
+        }
+      } catch (error) {
+        dispatch(
+          isToastShow({
+            isShow: true,
+            type: "error",
+            message: "something went wrong",
+          })
+        );
       }
-    } catch (error) {
-      dispatch(
-        isToastShow({
-          isShow: true,
-          type: "error",
-          message: "something went wrong",
-        })
-      );
     }
   };
 
@@ -235,7 +228,6 @@ const Properties = () => {
     },
   ];
 
-
   const onChangeHandler = (data) => {
     setBookingSlot({
       mode: bookingMode.current,
@@ -293,6 +285,16 @@ const Properties = () => {
     }
   };
 
+  const changeCity = (e) => {
+    const parts = location.pathname.split("/");
+    if (parts[1] === "properties") {
+      navigate(`/${parts[1]}/${e.target.value}`);
+    } else { 
+      navigate(`/${parts[1]}/${e.target.value}/${parts[3]}`);
+    }
+    setCity(e.target.value);
+  };
+
   return (
     <main className="main">
       <div className="page-title light-background">
@@ -330,7 +332,7 @@ const Properties = () => {
                         icon={
                           <i className="bi bi-crosshair me-1 field-icon"></i>
                         }
-                        // onChange={(e) => setCity(e.target.value)}
+                        onChange={(e) => changeCity(e)}
                       />
                     </div>
                     <div className="col-lg-4 col-md-4">
