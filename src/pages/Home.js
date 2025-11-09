@@ -1311,7 +1311,7 @@ const Home = () => {
                     disableOnInteraction: false,
                   }}
                   // navigation={true} // 👈 adds arrows
-                  pagination={{ clickable: true }} // 👈 adds dots
+                  pagination={false} // 👈 adds dots
                   breakpoints={{
                     // when window width is >= 320px
                     320: {
