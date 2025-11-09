@@ -2,6 +2,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import { Outlet, useLocation } from "react-router-dom";
 import ReactGA from "react-ga4";
+import { useEffect } from "react";
 
 const Layout = () => {
   const location = useLocation();
